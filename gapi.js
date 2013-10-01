@@ -28,23 +28,57 @@ angular.module('gapi', [])
    * it from a list of resources and their respective actions. 
    */
 
-  .factory('GAPI', function ($q, $http, GAPIconfig) {
+
+
+  .factory('GAPI', function ($q, $http) {
 
     /**
-     * Google APIs base URL
+     * Base URI for Google APIs
      */
 
-    var baseUrl = 'https://www.googleapis.com/'
+    var server = 'https://www.googleapis.com';
+
 
     /**
-     * HTTP Request Helper
+     * Generate a method name from an action and a resource
      */
 
-    function request(config) {
+    function methodName (action, resource) {
+      resource = resource.charAt(0).toUpperCase() + resource.slice(1);
+      return action + resource;
+    }
+
+
+    /**
+     * GAPI Service constructor
+     */
+
+    function GAPI (api, version, spec) {
+      var self = this
+        , resources = Object.keys(spec)
+        , actions
+        ;
+
+      self.api     = api;
+      self.version = version;
+      self.url     = [ server, api, version, '' ].join('/');
+
+      resources.forEach(function (resource) {
+        var actions = spec[resource];
+        actions.forEach(function (action) {
+          var method = methodName(action, resource);
+          self[method] = GAPI[action](resource)
+        });
+      });
+    }
+
+
+    /**
+     * Request helper
+     */
+
+    function request (config) {
       var deferred = $q.defer();
-
-      if (!config.params) { config.params = {}; }
-      config.params.access_token = GAPIconfig.oauthToken.access_token;
 
       function success(response) {
         console.log(config, response);
@@ -62,155 +96,266 @@ angular.module('gapi', [])
 
 
     /**
-     * General API method calls
+     * These methods are used to construct a service.
+     * They are not intended to be called directly on GAPI.
      */
 
-    var methods = {
-      
-
-      get: function (baseUrl, resource) {
-        return function (params) {
-          return request({
-            method: 'GET',
-            url: baseUrl + resource,
-            params: params
-          });          
-        }
-      },
+    GAPI.get = function (resource) {
+      return function (params) {
+        return request({
+          method: 'GET',
+          url: this.url + resource,
+          params: params
+        });
+      };
+    };
 
 
-      set: function (baseUrl, resource) {},
+    GAPI.set = function () {
+      return function () {};
+    };
+    
+
+    GAPI.list = function (resource) {
+      return function (params) {
+        return request({
+          method: 'GET',
+          url: this.url + resource,
+          params: params
+        });
+      };
+    };
+    
+
+    GAPI.insert = function (resource) {
+      return function (data, params) {
+        return request({
+          method: 'POST',
+          url: this.url + resource,
+          data: data,
+          params: params
+        });
+      };
+    };
+    
+
+    GAPI.update = function (resource) {
+      return function (data, params) {
+        return request({
+          method: 'PUT',
+          url: this.url + resource,
+          data: data,
+          params: params
+        });
+      };
+    };
 
 
-      list: function (baseUrl, resource) {
-        return function (params) {
-          return request({
-            method: 'GET',
-            url: baseUrl + resource,
-            params: params
-          });          
-        }        
-      },
-
-
-      insert: function (baseUrl, resource) {
-        return function (data, params) {
-          return request({
-            method: 'POST',
-            url: baseUrl + resource,
-            params: params,
-            data: data
-          });
-        };
-      },
-
-
-      update: function (baseUrl, resource) {
-        return function (data, params) {
-          return request({
-            method: 'PUT',
-            url: baseUrl + resource,
-            params: params,
-            data: data
-          });
-        };        
-      },
-
-
-      delete: function (baseUrl, resource) {
-        return function (data, params) {
-          return request({
-            method: 'DELETE',
-            url: baseUrl + resource,
-            params: params
-          });
-        };        
-      },
-      
-
-      rate: function (baseUrl, resource) {},
-      
-
-      getRating: function (baseUrl, resource) {}
-
-
+    GAPI.delete = function (resource) {
+      return function (params) {
+        return request({
+          method: 'DELETE',
+          url: this.url + resource,
+          params: params
+        });
+      };
     };
 
 
     /**
-     * Generate a method name by concatenating and camel-casing
-     * an action and resource.
+     * Authorization
      */
 
-    function methodName(action, resource) {
-      resource[0] = resource[0].toUppercase()
-      return action + resource;
-    }
+    GAPI.prototype.init = function () {}
 
-
-    /**
-     * GAPI Service Constructor
-     *
-     * For each resource in the provided spec, we define methods
-     * for each resource's actions.
-     *
-     * It would normally be poor form to assign to the prototype 
-     * within the body of a constructor. However, AngularJS services 
-     * are singletons, and we will only invoke this once per Google API.
-     */
-
-    function GAPI (api, version, spec) {
-      var actions,
-        , resources = Object.keys(spec)
-        , self = this;
-
-      self.baseUrl = baseUrl + api + '/' + version + '/';
-
-      resources.forEach(function (resource) {
-        var actions = spec[resource];
-      
-        actions.forEach(function (action) {
-          var method = methodName(action, resource);
-          this.prototype[method] = methods[action](self.baseUrl + resource);
-        });
-      });
-    }
 
     return GAPI;
-  });
 
-
-
-  /**
-   * Example of generating a service specific client.
-   */
-
-  .factory('Youtube', function (GAPI) {
-    var Youtube = new GAPI('youtube', 'v3', {
-      activities:       ['list', 'insert'],
-      channels:         ['list', 'update'],
-      guideCategories:  ['list'],
-      playlistItems:    ['list', 'insert', 'update', 'delete'],
-      playlists:        ['list', 'insert', 'update', 'delete'],
-      search:           ['list'],
-      subscriptions:    ['list', 'insert', 'delete'],
-    //  thumbnails:       ['set'],
-      videoCategories:  ['list'],
-    //  videos:           ['list', 'insert', 'update', 'delete', 'rate', 'getRating']
-    });
-
-    // Some methods don't fit the pattern
-    // Define them explicitly here
-    Youtube.getRating = function () {}
-
-    return Youtube;
   })
 
-
-  /**
-   * Example Controller
-   */
-
-  .controller('YoutubeCtrl', function ($scope, Youtube) {
-    $scope.activities = Youtube.listActivities({ limit: 10 })
-  })
+//  .factory('GAPI', function ($q, $http, GAPIconfig) {
+//
+//    /**
+//     * Google APIs base URL
+//     */
+//
+//    var baseUrl = 'https://www.googleapis.com/'
+//
+//    /**
+//     * HTTP Request Helper
+//     */
+//
+//    function request(config) {
+//      var deferred = $q.defer();
+//
+//      if (!config.params) { config.params = {}; }
+//      config.params.access_token = GAPIconfig.oauthToken.access_token;
+//
+//      function success(response) {
+//        console.log(config, response);
+//        deferred.resolve(response.data);
+//      }
+//
+//      function failure(fault) {
+//        console.log(config, fault);
+//        deferred.reject(fault);
+//      }
+//
+//      $http(config).then(success, failure);
+//      return deferred.promise;
+//    }
+//
+//
+//    /**
+//     * General API method calls
+//     */
+//
+//    var methods = {
+//      
+//
+//      get: function (baseUrl, resource) {
+//        return function (params) {
+//          return request({
+//            method: 'GET',
+//            url: baseUrl + resource,
+//            params: params
+//          });          
+//        }
+//      },
+//
+//
+//      set: function (baseUrl, resource) {},
+//
+//
+//      list: function (baseUrl, resource) {
+//        return function (params) {
+//          return request({
+//            method: 'GET',
+//            url: baseUrl + resource,
+//            params: params
+//          });          
+//        }        
+//      },
+//
+//
+//      insert: function (baseUrl, resource) {
+//        return function (data, params) {
+//          return request({
+//            method: 'POST',
+//            url: baseUrl + resource,
+//            params: params,
+//            data: data
+//          });
+//        };
+//      },
+//
+//
+//      update: function (baseUrl, resource) {
+//        return function (data, params) {
+//          return request({
+//            method: 'PUT',
+//            url: baseUrl + resource,
+//            params: params,
+//            data: data
+//          });
+//        };        
+//      },
+//
+//
+//      delete: function (baseUrl, resource) {
+//        return function (data, params) {
+//          return request({
+//            method: 'DELETE',
+//            url: baseUrl + resource,
+//            params: params
+//          });
+//        };        
+//      },
+//      
+//
+//      rate: function (baseUrl, resource) {},
+//      
+//
+//      getRating: function (baseUrl, resource) {}
+//
+//
+//    };
+//
+//
+//    /**
+//     * Generate a method name by concatenating and camel-casing
+//     * an action and resource.
+//     */
+//
+//    function methodName(action, resource) {
+//      resource[0] = resource[0].toUppercase()
+//      return action + resource;
+//    }
+//
+//
+//    /**
+//     * GAPI Service Constructor
+//     *
+//     * For each resource in the provided spec, we define methods
+//     * for each resource's actions.
+//     *
+//     * It would normally be poor form to assign to the prototype 
+//     * within the body of a constructor. However, AngularJS services 
+//     * are singletons, and we will only invoke this once per Google API.
+//     */
+//
+//    function GAPI (api, version, spec) {
+//      var actions
+//        , resources = Object.keys(spec)
+//        , self = this;
+//
+//      self.baseUrl = baseUrl + api + '/' + version + '/';
+//
+//      resources.forEach(function (resource) {
+//        var actions = spec[resource];
+//      
+//        actions.forEach(function (action) {
+//          var method = methodName(action, resource);
+//          this.prototype[method] = methods[action](self.baseUrl + resource);
+//        });
+//      });
+//    }
+//
+//    return GAPI;
+//  })
+//
+//
+//
+//  /**
+//   * Example of generating a service specific client.
+//   */
+//
+//  .factory('Youtube', function (GAPI) {
+//    var Youtube = new GAPI('youtube', 'v3', {
+//      activities:       ['list', 'insert'],
+//      channels:         ['list', 'update'],
+//      guideCategories:  ['list'],
+//      playlistItems:    ['list', 'insert', 'update', 'delete'],
+//      playlists:        ['list', 'insert', 'update', 'delete'],
+//      search:           ['list'],
+//      subscriptions:    ['list', 'insert', 'delete'],
+//    //  thumbnails:       ['set'],
+//      videoCategories:  ['list'],
+//    //  videos:           ['list', 'insert', 'update', 'delete', 'rate', 'getRating']
+//    });
+//
+//    // Some methods don't fit the pattern
+//    // Define them explicitly here
+//    Youtube.getRating = function () {}
+//
+//    return Youtube;
+//  })
+//
+//
+//  /**
+//   * Example Controller
+//   */
+//
+//  .controller('YoutubeCtrl', function ($scope, Youtube) {
+//    $scope.activities = Youtube.listActivities({ limit: 10 })
+//  })
