@@ -30,7 +30,14 @@ angular.module('gapi', [])
 
 
 
-  .factory('GAPI', function ($q, $http) {
+  .factory('GAPI', function ($q, $http, GoogleApp) {
+
+    /**
+     * GAPI Credentials
+     */
+
+    GAPI.app = GoogleApp;
+
 
     /**
      * Google APIs base URL
@@ -75,6 +82,21 @@ angular.module('gapi', [])
       });
     }
 
+
+    /**
+     * OAuth 2.0 Signatures
+     */
+
+    function oauthHeader(options) {
+      if (!options.headers) { options.headers = {}; }
+      options.headers['Authorization'] = 'Bearer ' + GAPI.app.oauthToken.access_token;      
+    }
+
+    function oauthParams(options) {
+      if (!options.params) { options.params = {}; }
+      options.params.access_token = GAPI.app.oauthToken.access_token;      
+    }
+
     
     /**
      * HTTP Request Helper
@@ -83,8 +105,7 @@ angular.module('gapi', [])
     function request (config) {
       var deferred = $q.defer();
 
-//      if (!config.params) { config.params = {}; }
-//      config.params.access_token = GAPIconfig.oauthToken.access_token;
+      //oauthHeader(config);
 
       function success(response) {
         console.log(config, response);
@@ -174,11 +195,26 @@ angular.module('gapi', [])
      * Authorization
      */
 
-    GAPI.prototype.init = function () {}
+    GAPI.init = function () {
+      var app = GAPI.app
+        , deferred = $q.defer();
 
+      gapi.load('auth', function () {
+        gapi.auth.authorize({
+          client_id: app.clientId,
+          scope: app.scopes,
+          immediate: false     
+        }, function() {
+          app.oauthToken = gapi.auth.getToken();
+          deferred.resolve(app);
+          console.log('authorization', app)
+        });
+      });
+
+      return deferred.promise;  
+    }
 
     return GAPI;
-
   })
 
 

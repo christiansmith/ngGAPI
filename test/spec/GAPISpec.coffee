@@ -1,10 +1,10 @@
 describe 'GAPI', ->
 
-  {GAPI,Service,$httpBackend,baseUrl} = {}
+  {GAPI,Service,$httpBackend,baseUrl,authorization} = {}
 
 
   angular.module('gapi')
-    .value 'GAPIconfig', 
+    .value 'GoogleApp', 
       apiKey: '1234'
       clientId: 'abcd'
       scopes: [
@@ -34,6 +34,12 @@ describe 'GAPI', ->
   afterEach ->
     $httpBackend.verifyNoOutstandingExpectation()
     $httpBackend.verifyNoOutstandingRequest()
+
+
+  describe 'authorization', ->
+
+    it 'should return promise'
+
 
 
   describe 'service constructor', ->
@@ -70,9 +76,6 @@ describe 'GAPI', ->
     it 'should define a delete method on a specified resource', ->
       expect(typeof Service.deleteResources).toEqual('function')
       #expect(Service.deleteResources).toBe GAPI.delete
-
-    it 'should define init', ->
-      expect(typeof Service.init).toEqual('function')
 
 
   describe 'constructed service', ->
