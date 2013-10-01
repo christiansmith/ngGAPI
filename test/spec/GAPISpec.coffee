@@ -115,15 +115,7 @@ describe 'GAPI', ->
       $httpBackend.flush()
 
 
-  describe 'list', ->
 
-  describe 'insert', ->
-
-  describe 'update', ->
-
-  describe 'delete', ->
-
-  describe 'set', ->
 
   describe 'rate', ->
 
