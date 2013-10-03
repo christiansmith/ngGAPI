@@ -80,6 +80,8 @@ angular.module('gapi', [])
           self[method] = GAPI[action](resource)
         });
       });
+
+      self.search = GAPI.search;
     }
 
 
@@ -189,6 +191,20 @@ angular.module('gapi', [])
         });
       };
     };
+
+
+    GAPI.search = function (query) {
+      return request({
+        method: 'GET',
+        url: this.url + 'search',
+        params: {
+          q: query,
+          part: 'snippet',
+          maxResults: 50
+        }
+      });
+    }
+
 
 
     /**

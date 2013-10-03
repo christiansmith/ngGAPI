@@ -55,27 +55,30 @@ describe 'GAPI', ->
 
     it 'should define a get method on a specified resource', ->
       expect(typeof Service.getResources).toEqual('function')
-      #expect(Service.getResources).toBe GAPI.get
+      expect(Service.getResources.toString()).toBe GAPI.get('resource').toString()
 
     it 'should define a set method on a specified resource', ->
       expect(typeof Service.setResources).toEqual('function')
-      #expect(Service.setResources).toBe GAPI.set
+      expect(Service.setResources.toString()).toBe GAPI.set('resource').toString()
 
     it 'should define a list method on a specified resource', ->
       expect(typeof Service.listResources).toEqual('function')
-      #expect(Service.listResources).toBe GAPI.list
+      expect(Service.listResources.toString()).toBe GAPI.list('resource').toString()
 
     it 'should define an insert method on a specified resource', ->
       expect(typeof Service.insertResources).toEqual('function')
-      #expect(Service.insertResources).toBe GAPI.insert
+      expect(Service.insertResources.toString()).toBe GAPI.insert('resource').toString()
 
     it 'should define an update method on a specified resource', ->
       expect(typeof Service.updateResources).toEqual('function')
-      #expect(Service.updateResources).toBe GAPI.update
+      expect(Service.updateResources.toString()).toBe GAPI.update('resource').toString()
 
     it 'should define a delete method on a specified resource', ->
       expect(typeof Service.deleteResources).toEqual('function')
-      #expect(Service.deleteResources).toBe GAPI.delete
+      expect(Service.deleteResources.toString()).toBe GAPI.delete('resource').toString()
+
+    it 'should define a search method on the constructed service', ->
+      expect(Service.search).toBe GAPI.search
 
 
   describe 'constructed service', ->
@@ -117,13 +120,15 @@ describe 'GAPI', ->
       Service.deleteResources()
       $httpBackend.flush()
 
-
+    it 'should search', ->
+      url = "#{Service.url}search?maxResults=50&part=snippet&q=Raphael%20Rabello"
+      $httpBackend.expectGET(url).respond null
+      Service.search('Raphael Rabello')
+      $httpBackend.flush()
 
 
   describe 'rate', ->
 
   describe 'getRating', ->
-
-  describe 'search', ->
 
   describe 'init', ->
