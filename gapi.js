@@ -255,7 +255,7 @@ angular.module('gapi', [])
    *   updatePlaylists(data, params)
    *   deletePlaylists(params)
    *  
-   *   search() ! OOPS, this shouldn't be treated as a resource.
+   *   search()
    *  
    *   listSubscriptions(params)
    *   insertSubscriptions(data, params)
@@ -281,7 +281,6 @@ angular.module('gapi', [])
       guideCategories:  ['list'],
       playlistItems:    ['list', 'insert', 'update', 'delete'],
       playlists:        ['list', 'insert', 'update', 'delete'],
-      search:           ['list'], // oops, this isn't a resource either...
       subscriptions:    ['list', 'insert', 'delete'],
       thumbnails:       ['set'],
       videoCategories:  ['list'],
