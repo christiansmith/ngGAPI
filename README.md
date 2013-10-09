@@ -9,7 +9,7 @@ This is a work in progress and usage is subject to change. Currently only Youtub
 
 ## Install
 
-[Bower](http://bower.io/) is the quickest way to include ngDropbox in your project.
+[Bower](http://bower.io/) is the quickest way to include ngGAPI in your project.
 
     $ bower install git@github.com:christiansmith/ngGAPI.git --save
 

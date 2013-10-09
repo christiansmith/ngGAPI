@@ -57,31 +57,54 @@ angular.module('gapi', [])
 
 
     /**
-     * GAPI Service Constructor
+     * Recurse through a "spec" object and create methods for 
+     * resources and nested resources.
      * 
      * For each resource in the provided spec, we define methods
-     * for each resource's actions.
+     * for each of the its actions.
      */
     
-    function GAPI (api, version, spec) {
-      var self = this
-        , resources = Object.keys(spec)
-        , actions
-        ;
-
-      self.api     = api;
-      self.version = version;
-      self.url     = [ server, api, version, '' ].join('/');
+    function createMethods (service, spec, parents) {
+      var resources = Object.keys(spec);
 
       resources.forEach(function (resource) {
         var actions = spec[resource];
+
         actions.forEach(function (action) {
-          var method = methodName(action, resource);
-          self[method] = GAPI[action](resource)
+          
+          // if the action is an object, treat it as a nested
+          // spec and recurse
+          if (typeof action === 'object') {
+
+            if (!parents) { parents = []; }
+            // we can't keep passing around the 
+            // same array, we need a new one
+            var p = parents.concat([resource]); 
+            createMethods(service, action, p);
+
+          } else {
+          
+            var method = methodName(action, resource);
+            service[method] = GAPI[action](resource, parents);              
+          
+          }
         });
       });
+    }
 
-      self.search = GAPI.search;
+
+    /**
+     * GAPI Service Constructor
+     */
+
+    function GAPI (api, version, spec) {
+      this.api     = api;
+      this.version = version;
+      this.url     = [ server, api, version, '' ].join('/');
+
+      createMethods(this, spec);
+      
+      this.search = GAPI.search;
     }
 
 
@@ -131,11 +154,24 @@ angular.module('gapi', [])
      * They are not intended to be called directly on GAPI.
      */
 
-    GAPI.get = function (resource) {
-      return function (params) {
+    GAPI.get = function (resource, parents) {
+      return function () {
+        var url = this.url
+          , args = arguments
+          , params = arguments[arguments.length.toString()]
+          ;
+
+        if (parents && parents.length > 0) {
+          parents.forEach(function (parent, i) {
+            url += parent + '/' + args[i.toString()] + '/'
+          });
+        }
+
+        url += resource + '/' + args[(arguments.length - 1).toString()]
+
         return request({
           method: 'GET',
-          url: this.url + resource,
+          url: url,
           params: params
         });
       };
@@ -147,22 +183,63 @@ angular.module('gapi', [])
     };
     
 
-    GAPI.list = function (resource) {
-      return function (params) {
+    GAPI.list = function (resource, parents) {
+      return function () {
+        var url = this.url
+          , args = arguments
+          , params = arguments[arguments.length.toString()]
+          ;
+
+        if (parents && parents.length > 0) {
+          parents.forEach(function (parent, i) {
+            url += parent + '/' + args[i.toString()] + '/'
+          });
+        }
+
+        url += resource;
+
         return request({
           method: 'GET',
-          url: this.url + resource,
+          url: url,
           params: params
         });
       };
     };
     
 
-    GAPI.insert = function (resource) {
-      return function (data, params) {
+    GAPI.insert = function (resource, parents) {
+      return function () {
+        var url = this.url
+          , args = arguments
+          , last = args[(args.length - 1).toString()]
+          , next = args[(args.length - 2).toString()]
+          , lastType = typeof last
+          , nextType = typeof next
+          , data
+          , params
+          ;
+
+        if (lastType === 'object' && nextType === 'object') {
+          data = next;
+          params = last;
+        }
+
+        if (lastType === 'object' && nextType !== 'object') {
+          data = last;
+          params = undefined;
+        }
+
+        if (parents && parents.length > 0) {
+          parents.forEach(function (parent, i) {
+            url += parent + '/' + args[i.toString()] + '/'
+          });
+        }
+
+        url += resource;
+
         return request({
           method: 'POST',
-          url: this.url + resource,
+          url: url,
           data: data,
           params: params
         });
@@ -235,42 +312,42 @@ angular.module('gapi', [])
 
 
   /**
-   * Youtube
+   * Youtube API
    *
-   *   listActivities(params)
-   *   insertActivities(data, params)
+   *   Youtube.listActivities(params)
+   *   Youtube.insertActivities(data, params)
    *   
-   *   listChannels(params)
-   *   updateChannels(data, params)
+   *   Youtube.listChannels(params)
+   *   Youtube.updateChannels(data, params)
    *  
-   *   listGuideCategories(params)
+   *   Youtube.listGuideCategories(params)
    *  
-   *   listPlaylistItems(params)
-   *   insertPlaylistItems(data, params)
-   *   updatePlaylistItems(data, params)
-   *   deletePlaylistItems(params)
+   *   Youtube.listPlaylistItems(params)
+   *   Youtube.insertPlaylistItems(data, params)
+   *   Youtube.updatePlaylistItems(data, params)
+   *   Youtube.deletePlaylistItems(params)
    *  
-   *   listPlaylists(params)
-   *   insertPlaylists(data, params)
-   *   updatePlaylists(data, params)
-   *   deletePlaylists(params)
+   *   Youtube.listPlaylists(params)
+   *   Youtube.insertPlaylists(data, params)
+   *   Youtube.updatePlaylists(data, params)
+   *   Youtube.deletePlaylists(params)
    *  
-   *   search()
+   *   Youtube.search()
    *  
-   *   listSubscriptions(params)
-   *   insertSubscriptions(data, params)
-   *   deleteSubscriptions(params)
+   *   Youtube.listSubscriptions(params)
+   *   Youtube.insertSubscriptions(data, params)
+   *   Youtube.deleteSubscriptions(params)
    *  
-   *   setThumbnails(?)
+   *   Youtube.setThumbnails(?)
    *  
-   *   listVideoCategories(params)
+   *   Youtube.listVideoCategories(params)
    *  
-   *   listVideos(params)
-   *   insertVideos(data, params)
-   *   updateVideos(data, params)
-   *   deleteVideos(params)
+   *   Youtube.listVideos(params)
+   *   Youtube.insertVideos(data, params)
+   *   Youtube.updateVideos(data, params)
+   *   Youtube.deleteVideos(params)
    *  
-   *   getRating(?)
+   *   Youtube.getRating(?)
    * 
    */
 
@@ -278,20 +355,81 @@ angular.module('gapi', [])
     var Youtube = new GAPI('youtube', 'v3', {
       activities:       ['list', 'insert'],
       channels:         ['list', 'update'],
+      channelBanners:   ['insert'],
       guideCategories:  ['list'],
+      liveBroadcasts:   ['list', 'insert', 'update', 'delete'],
+      liveStreams:      ['list', 'insert', 'update', 'delete'],
       playlistItems:    ['list', 'insert', 'update', 'delete'],
       playlists:        ['list', 'insert', 'update', 'delete'],
       subscriptions:    ['list', 'insert', 'delete'],
       thumbnails:       ['set'],
       videoCategories:  ['list'],
-      videos:           ['list', 'insert', 'update', 'delete']
+      videos:           ['list', 'insert', 'update', 'delete'],
+      watermarks:       ['set']
     });
 
     // Some methods don't fit the pattern
     // Define them explicitly here
+    Youtube.bindLiveBroadcasts = function () {};
+    Youtube.controlLiveBroadcasts = function () {};
+    Youtube.transitionLiveBroadcasts = function () {};
+
     Youtube.rate = function () {};
     Youtube.getRating = function () {};
 
+    Youtube.unsetWatermarks = function () {};
+
     return Youtube;
   })
+
+
+  /**
+   * Blogger API
+   *
+   *   Blogger.getBlogs(id)
+   *   Blogger.getBlogByUrl()
+   *   Blogger.getBlogsByUser
+   *   
+   *   Blogger.listComments(blogId, postId)
+   *   Blogger.getComments(blogId, postId, commentId)
+   *
+   *   Blogger.listPages(blogId)
+   *   Blogger.getPages(blogId, pageId)
+   *
+   *   Blogger.listPosts(blogId)
+   *   Blogger.getPosts(blogId, postId)
+   *   Blogger.insertPosts(blogId, postId)
+   *   Blogger.updatePosts(blogId, postId)
+   *   Blogger.deletePosts(blogId, postId)
+   *   Blogger.patchPosts(blogId, postId)
+   *   
+   *   Blogger.getPostByPath(blogId, path)
+   *   Blogger.searchPosts(blogId, query)
+   *   
+   *   Blogger.getUsers(userId)
+   *   
+   */
+
+
+  .factory('Blogger', function (GAPI) {
+
+    var Blogger = GAPI('blogger', 'v3', {
+      users:        ['get'],
+      blogs:        ['get', {
+        pages:      ['list', 'get'],
+        posts:      ['list', 'get', 'insert', 'update', 'delete', 'patch', {
+          comments: ['list', 'get']
+        }]
+      }]
+    });
+
+    // search
+    // patch
+    // getPostsByPath
+    // getBlogByUrl
+    // listBlogsByUser
+    
+    return Blogger;
+  })
+
 

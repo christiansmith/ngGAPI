@@ -28,6 +28,12 @@ describe 'GAPI', ->
         'insert'
         'update'
         'delete'
+        { nested: [
+            'get', 'set', 'insert', 'update', 'delete', {
+              nested: ['list']
+            }
+          ] 
+        }
       ] 
     
 
@@ -39,7 +45,6 @@ describe 'GAPI', ->
   describe 'authorization', ->
 
     it 'should return promise'
-
 
 
   describe 'service constructor', ->
@@ -77,19 +82,33 @@ describe 'GAPI', ->
       expect(typeof Service.deleteResources).toEqual('function')
       expect(Service.deleteResources.toString()).toBe GAPI.delete('resource').toString()
 
+    it 'should define a get method on a nested resource'
+    it 'should define a set method on a nested resource'
+
+    it 'should define a list method on a nested resource', ->
+      expect(typeof Service.listNested).toEqual('function')
+    
+    it 'should define an insert method on a nested resource'
+    it 'should define an update method on a nested resource'
+    it 'should define a delete method on a nested resource'
+
     it 'should define a search method on the constructed service', ->
       expect(Service.search).toBe GAPI.search
 
 
   describe 'constructed service', ->
 
-    # IS THIS RIGHT???
     it 'should get a resource', ->
-      url = "#{Service.url}resources"
+      url = "#{Service.url}resources/123"
       $httpBackend.expectGET(url).respond null
-      Service.getResources()
+      Service.getResources('123')
       $httpBackend.flush()
 
+    it 'should get a nested resource', ->
+      url = "#{Service.url}resources/123/nested/456"
+      $httpBackend.expectGET(url).respond null
+      Service.getNested('123', '456')
+      $httpBackend.flush()
 
     it 'should set a resource'
 
@@ -97,7 +116,13 @@ describe 'GAPI', ->
     it 'should list resources', ->
       url = "#{Service.url}resources"
       $httpBackend.expectGET(url).respond null
-      Service.getResources()
+      Service.listResources()
+      $httpBackend.flush()
+
+    it 'should list nested resources', ->
+      url = "#{Service.url}resources/123/nested/456/nested"
+      $httpBackend.expectGET(url).respond null
+      Service.listNested('123', '456')
       $httpBackend.flush()
 
     it 'should insert resources', ->
@@ -105,6 +130,13 @@ describe 'GAPI', ->
       data = {}
       $httpBackend.expectPOST(url, data).respond null
       Service.insertResources(data)
+      $httpBackend.flush()
+
+    it 'should insert nested resources', ->
+      url = "#{Service.url}resources/123/nested"
+      data = {}
+      $httpBackend.expectPOST(url, data).respond null
+      Service.insertNested('123', data)
       $httpBackend.flush()
 
     it 'should update a resource', ->
@@ -127,8 +159,7 @@ describe 'GAPI', ->
       $httpBackend.flush()
 
 
-  describe 'rate', ->
-
-  describe 'getRating', ->
-
-  describe 'init', ->
+  describe 'Youtube', ->
+  describe 'Blogger', ->
+  describe 'Drive', ->
+  describe 'Plus', ->
