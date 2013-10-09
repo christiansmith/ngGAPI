@@ -21,11 +21,7 @@ angular.module('gapi', [])
    *     delete         DELETE
    *     etc            ...
    *
-   * Among the collected API's, these methods map consistently.
-   *
-   * THE QUESTION IS, DO THEIR SIGNATURES MAP CONSISTENTLY FROM API TO 
-   * API? If so, to define an API client, we should be able to generate 
-   * it from a list of resources and their respective actions. 
+   * Among the collected API's, these methods appear to map consistently.
    */
 
 
@@ -148,31 +144,47 @@ angular.module('gapi', [])
 
 
     /**
+     * Build a resource url, optionally with nested resources
+     */
+
+    function resourceUrl (args, parents, base, resource) {
+      var argIndex = 0
+        , nodes = []
+        , params = args[args.length.toString()]
+        ;
+
+      if (parents && parents.length > 0) {
+        parents.forEach(function (parent, i) {
+          nodes.push(parent, args[i.toString()])
+          argIndex += 1;
+        });
+      } 
+
+      nodes.push(resource);
+      if (['string', 'number'].indexOf(typeof args[argIndex.toString()]) !== -1) {
+        nodes.push(args[argIndex.toString()]);
+      }
+
+      return base += nodes.join('/');
+    }
+
+
+    /**
      * General API methods
      * 
      * These methods are used to construct a service.
      * They are not intended to be called directly on GAPI.
      */
 
+
+
+
     GAPI.get = function (resource, parents) {
       return function () {
-        var url = this.url
-          , args = arguments
-          , params = arguments[arguments.length.toString()]
-          ;
-
-        if (parents && parents.length > 0) {
-          parents.forEach(function (parent, i) {
-            url += parent + '/' + args[i.toString()] + '/'
-          });
-        }
-
-        url += resource + '/' + args[(arguments.length - 1).toString()]
-
         return request({
           method: 'GET',
-          url: url,
-          params: params
+          url: resourceUrl(arguments, parents, this.url, resource),
+          params: arguments[arguments.length.toString()]
         });
       };
     };
@@ -183,34 +195,24 @@ angular.module('gapi', [])
     };
     
 
+
+
     GAPI.list = function (resource, parents) {
       return function () {
-        var url = this.url
-          , args = arguments
-          , params = arguments[arguments.length.toString()]
-          ;
-
-        if (parents && parents.length > 0) {
-          parents.forEach(function (parent, i) {
-            url += parent + '/' + args[i.toString()] + '/'
-          });
-        }
-
-        url += resource;
-
         return request({
           method: 'GET',
-          url: url,
-          params: params
+          url: resourceUrl(arguments, parents, this.url, resource),
+          params: arguments[arguments.length.toString()]
         });
       };
     };
     
 
+    // UGLY REPETITION FROM LINES 214 to 231
+    // ON LINES 246 to 263
     GAPI.insert = function (resource, parents) {
       return function () {
-        var url = this.url
-          , args = arguments
+        var args = arguments
           , last = args[(args.length - 1).toString()]
           , next = args[(args.length - 2).toString()]
           , lastType = typeof last
@@ -229,17 +231,9 @@ angular.module('gapi', [])
           params = undefined;
         }
 
-        if (parents && parents.length > 0) {
-          parents.forEach(function (parent, i) {
-            url += parent + '/' + args[i.toString()] + '/'
-          });
-        }
-
-        url += resource;
-
         return request({
           method: 'POST',
-          url: url,
+          url: resourceUrl(arguments, parents, this.url, resource), 
           data: data,
           params: params
         });
@@ -247,11 +241,30 @@ angular.module('gapi', [])
     };
     
 
-    GAPI.update = function (resource) {
-      return function (data, params) {
+    GAPI.update = function (resource, parents) {
+      return function () {
+        var args = arguments
+          , last = args[(args.length - 1).toString()]
+          , next = args[(args.length - 2).toString()]
+          , lastType = typeof last
+          , nextType = typeof next
+          , data
+          , params
+          ;
+
+        if (lastType === 'object' && nextType === 'object') {
+          data = next;
+          params = last;
+        }
+
+        if (lastType === 'object' && nextType !== 'object') {
+          data = last;
+          params = undefined;
+        }
+
         return request({
           method: 'PUT',
-          url: this.url + resource,
+          url: resourceUrl(arguments, parents, this.url, resource),
           data: data,
           params: params
         });
@@ -259,12 +272,12 @@ angular.module('gapi', [])
     };
 
 
-    GAPI.delete = function (resource) {
-      return function (params) {
+    GAPI.delete = function (resource, parents) {
+      return function () {
         return request({
           method: 'DELETE',
-          url: this.url + resource,
-          params: params
+          url: resourceUrl(arguments, parents, this.url, resource),
+          params: arguments[arguments.length.toString()]
         });
       };
     };
@@ -413,11 +426,11 @@ angular.module('gapi', [])
 
   .factory('Blogger', function (GAPI) {
 
-    var Blogger = GAPI('blogger', 'v3', {
+    var Blogger = new GAPI('blogger', 'v3', {
       users:        ['get'],
       blogs:        ['get', {
         pages:      ['list', 'get'],
-        posts:      ['list', 'get', 'insert', 'update', 'delete', 'patch', {
+        posts:      ['list', 'get', 'insert', 'update', 'delete', {
           comments: ['list', 'get']
         }]
       }]
