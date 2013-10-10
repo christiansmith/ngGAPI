@@ -200,6 +200,58 @@ describe 'GAPI', ->
     it 'should refer to the correct url', ->
       expect(Youtube.url).toBe 'https://www.googleapis.com/youtube/v3/'
 
+    it 'should list activities'
+    it 'should insert activities'
+
+    it 'should list channels'
+    it 'should update channels'
+    
+    it 'should list guide categories'
+    
+    it 'should bind live broadcasts'
+    it 'should control live broadcasts'
+    it 'should transition live broadcasts'
+    it 'should list live broadcasts'
+    it 'should insert live broadcasts'
+    it 'should update live broadcasts'
+    it 'should delete live broadcasts'
+    
+    it 'should list live streams'
+    it 'should insert live streams'
+    it 'should update live streams'
+    it 'should delete live streams'
+    
+    it 'should list playlist items'
+    it 'should insert playlist items'
+    it 'should update playlist items'
+    it 'should delete playlist items'
+    
+    it 'should list playlists'
+    it 'should insert playlists'
+    it 'should update playlists'
+    it 'should delete playlists'
+    
+    it 'should list subscriptions'
+    it 'should insert subscriptions'
+    it 'should delete subscriptions'
+    
+    it 'should set thumbnail'
+    
+    it 'should list video categories'
+    
+    it 'should list videos'
+    it 'should insert videos'
+    it 'should update videos'
+    it 'should delete videos'
+    
+    it 'should set watermark'
+    it 'should unset watermark'
+    
+    it 'should rate'
+    it 'should get rating'
+    
+    it 'should search'
+
 
   describe 'Blogger', ->
 
@@ -215,6 +267,112 @@ describe 'GAPI', ->
     it 'should refer to the correct url', ->
       expect(Blogger.url).toBe 'https://www.googleapis.com/blogger/v3/'
 
+    it 'should get blog by id'
+    it 'should get blog by url'
+    it 'should list blogs by user'
+    it 'should list comments'
+    it 'should get a comment'
+    it 'should list pages'
+    it 'should get a page'
+    it 'should get a post'
+    it 'should list posts'
+    it 'should search posts'
+    it 'should insert a post'
+    it 'should delete a post'
+    it 'should get posts by path'
+    it 'should patch a post'
+    it 'should update a post'
+    it 'should get a user'
+
 
   describe 'Drive', ->
+
+    it 'should get a file'
+    it 'should insert a file'
+    it 'should patch a file'
+    it 'should update a file'
+    it 'should copy a file'
+    it 'should delete a file'
+    it 'should list files'
+    it 'should touch a file'
+    it 'should trash a file'
+    it 'should untrash a file'
+    it 'should watch a file'
+
+    it 'should get current user and settings'
+
+    it 'should get a change'
+    it 'should list changes'
+    it 'should watch changes'
+
+    it 'should delete a child from a folder'
+    it 'should get a child from a folder'
+    it 'should insert a file into a folder'
+    it 'should list files in a folder'
+
+    it 'should delete a parent from a file'
+    it 'should get a parent reference'
+    it 'should insert a parent for a file'
+    it 'should list a file\'s parents'
+
+    it 'should delete a permission from a file'
+    it 'should get a permission by id'
+    it 'should insert a permission for a file'
+    it 'should list a file\'s permissions'
+    it 'should patch a permission'
+    it 'should update a permission'
+    it 'should get the permission id for an email address'
+
+    it 'should remove a revision'
+    it 'should get a revision'
+    it 'should list a file\'s revisions'
+    it 'should patch a revision'
+    it 'should update a revision'
+
+    it 'should list a user\'s installed apps'
+    it 'should get an app'
+
+    it 'should delete a comment'
+    it 'should get a comment by id'
+    it 'should insert a comment on a file'
+    it 'should list a file\'s comments'
+    it 'should patch a comment'
+    it 'should update a comment'
+
+    it 'should delete a reply'
+    it 'should get a reply'
+    it 'should insert a reply'
+    it 'should list replies to a comment'
+    it 'should patch a reply'
+    it 'should update a reply'    
+
+    it 'should delete a property'
+    it 'should get a property'
+    it 'should insert a property'
+    it 'should list properties of a file'
+    it 'should patch a property'
+    it 'should update a property'   
+
+    it 'should stop a channel'
+    it 'should get realtime'
+    it 'should update realtime'
+
+
   describe 'Plus', ->
+
+    it 'should get a person by id'
+    it 'should search people'
+    it 'should list people by activity'
+    it 'should list people added to a user\'s circles'
+
+    it 'should list activities by collection'
+    it 'should get an activity'
+    it 'should search activities'
+
+    it 'should list activity comments'
+    it 'should get a comment'
+
+    it 'should insert a moment'
+    it 'should list moments written by the app'
+    it 'should delete a moment written by the app'
+
