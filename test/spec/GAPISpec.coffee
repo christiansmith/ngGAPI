@@ -1,6 +1,11 @@
 describe 'GAPI', ->
 
-  {GAPI,Service,Youtube,Blogger,$httpBackend,baseUrl,authorization} = {}
+  { 
+    GAPI,Service,Youtube,Blogger,
+    $httpBackend,baseUrl,
+    getHeaders,postHeaders,putHeaders,deleteHeaders,
+    authorization
+  } = {}
 
 
   angular.module('gapi')
@@ -19,6 +24,23 @@ describe 'GAPI', ->
   beforeEach inject ($injector) ->
     GAPI         = $injector.get 'GAPI'
     $httpBackend = $injector.get '$httpBackend'
+
+    GAPI.app = {
+      oauthToken: {
+        access_token: '1234abcd'
+      }
+    }
+
+    getHeaders = deleteHeaders = 
+      "Accept":"application/json, text/plain, */*"
+      "X-Requested-With":"XMLHttpRequest"
+      "Authorization":"Bearer 1234abcd"
+
+    postHeaders = putHeaders =
+      "Accept":"application/json, text/plain, */*"
+      "X-Requested-With":"XMLHttpRequest"
+      "Content-Type":"application/json;charset=utf-8"
+      "Authorization":"Bearer 1234abcd"
 
     Service = new GAPI 'service', 'v1', 
       resources: [
@@ -114,13 +136,13 @@ describe 'GAPI', ->
 
     it 'should get a resource', ->
       url = "#{Service.url}resources/123"
-      $httpBackend.expectGET(url).respond null
+      $httpBackend.expectGET(url, getHeaders).respond null
       Service.getResources('123')
       $httpBackend.flush()
 
     it 'should get a nested resource', ->
       url = "#{Service.url}resources/123/nested/456"
-      $httpBackend.expectGET(url).respond null
+      $httpBackend.expectGET(url, getHeaders).respond null
       Service.getNested('123', '456')
       $httpBackend.flush()
 
@@ -129,59 +151,59 @@ describe 'GAPI', ->
 
     it 'should list resources', ->
       url = "#{Service.url}resources"
-      $httpBackend.expectGET(url).respond null
+      $httpBackend.expectGET(url, getHeaders).respond null
       Service.listResources()
       $httpBackend.flush()
 
     it 'should list nested resources', ->
       url = "#{Service.url}resources/123/nested/456/nested"
-      $httpBackend.expectGET(url).respond null
+      $httpBackend.expectGET(url, getHeaders).respond null
       Service.listNested('123', '456')
       $httpBackend.flush()
 
     it 'should insert resources', ->
       url = "#{Service.url}resources"
       data = {}
-      $httpBackend.expectPOST(url, data).respond null
+      $httpBackend.expectPOST(url, data, postHeaders).respond null
       Service.insertResources(data)
       $httpBackend.flush()
 
     it 'should insert nested resources', ->
       url = "#{Service.url}resources/123/nested"
       data = {}
-      $httpBackend.expectPOST(url, data).respond null
+      $httpBackend.expectPOST(url, data, postHeaders).respond null
       Service.insertNested('123', data)
       $httpBackend.flush()
 
     it 'should update a resource', ->
       url = "#{Service.url}resources"
       data = {}
-      $httpBackend.expectPUT(url, data).respond null
+      $httpBackend.expectPUT(url, data, putHeaders).respond null
       Service.updateResources(data)
       $httpBackend.flush()
 
     it 'should update a nested resource', ->
       url = "#{Service.url}resources/123/nested/456"
       data = {}
-      $httpBackend.expectPUT(url, data).respond null
+      $httpBackend.expectPUT(url, data, putHeaders).respond null
       Service.updateNested('123', '456', data)
       $httpBackend.flush()
 
     it 'should delete a resource', ->
       url = "#{Service.url}resources"
-      $httpBackend.expectDELETE(url).respond null
+      $httpBackend.expectDELETE(url, deleteHeaders).respond null
       Service.deleteResources()
       $httpBackend.flush()
 
     it 'should delete a nested resource', ->
       url = "#{Service.url}resources/123/nested"
-      $httpBackend.expectDELETE(url).respond null
+      $httpBackend.expectDELETE(url, deleteHeaders).respond null
       Service.deleteNested('123')
       $httpBackend.flush()
 
     it 'should search', ->
       url = "#{Service.url}search?maxResults=50&part=snippet&q=Raphael%20Rabello"
-      $httpBackend.expectGET(url).respond null
+      $httpBackend.expectGET(url, getHeaders).respond null
       Service.search('Raphael Rabello')
       $httpBackend.flush()
 
@@ -420,4 +442,3 @@ describe 'GAPI', ->
     it 'should list user settings for the authenticated user'
 
     it 'should stop a channel'
-    

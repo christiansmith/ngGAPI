@@ -126,7 +126,7 @@ angular.module('gapi', [])
     function request (config) {
       var deferred = $q.defer();
 
-      //oauthHeader(config);
+      oauthHeader(config);
 
       function success(response) {
         console.log(config, response);
@@ -170,6 +170,16 @@ angular.module('gapi', [])
 
 
     /**
+     * Get params from last argument
+     */
+
+    function params (args) {
+      var last = args[(args.length - 1).toString()];
+      return (typeof last === 'object') ? last : null      
+    }
+
+
+    /**
      * General API methods
      * 
      * These methods are used to construct a service.
@@ -177,14 +187,12 @@ angular.module('gapi', [])
      */
 
 
-
-
     GAPI.get = function (resource, parents) {
       return function () {
         return request({
           method: 'GET',
           url: resourceUrl(arguments, parents, this.url, resource),
-          params: arguments[arguments.length.toString()]
+          params: params(arguments)
         });
       };
     };
@@ -202,7 +210,7 @@ angular.module('gapi', [])
         return request({
           method: 'GET',
           url: resourceUrl(arguments, parents, this.url, resource),
-          params: arguments[arguments.length.toString()]
+          params: params(arguments)
         });
       };
     };
@@ -277,7 +285,7 @@ angular.module('gapi', [])
         return request({
           method: 'DELETE',
           url: resourceUrl(arguments, parents, this.url, resource),
-          params: arguments[arguments.length.toString()]
+          params: params(arguments)
         });
       };
     };
