@@ -203,6 +203,9 @@ angular.module('gapi', [])
     };
     
 
+    GAPI.patch = function () {
+      return function () {};
+    };
 
 
     GAPI.list = function (resource, parents) {
@@ -454,3 +457,62 @@ angular.module('gapi', [])
   })
 
 
+  /**
+   * Drive API
+   */
+
+  .factory('Drive', function (GAPI) {
+    var Drive = new GAPI('drive', 'v2', {
+      files:          ['get', 'list', 'insert', 'update', 'delete', 'patch', {
+        children:     ['get', 'list', 'insert', 'delete'],
+        parents:      ['get', 'list', 'insert', 'delete'],        
+        permissions:  ['get', 'list', 'insert', 'update', 'delete', 'patch'],
+        revisions:    ['get', 'list', 'update', 'delete', 'patch'],
+        comments:     ['get', 'list', 'insert', 'update', 'delete', 'patch'],
+        replies:      ['get', 'list', 'insert', 'update', 'delete', 'patch'],
+        properties:   ['get', 'list', 'insert', 'update', 'delete', 'patch'],
+        realtime:     ['get', 'update']
+      }],
+      about: ['get'],
+      changes: ['get', 'list'],
+      apps: ['get', 'list']
+    });
+
+    Drive.copyFile    = function () {};
+    Drive.touchFile   = function () {};
+    Drive.trashFile   = function () {};
+    Drive.untrashFile = function () {};
+    Drive.watchFile   = function () {};
+    Drive.watchChanges = function () {};
+    Drive.getPermissionIdForEmail = function () {};
+    Drive.stopChannels = function () {};
+
+    return Drive;
+  })
+
+
+  /**
+   * Google+ API
+   */
+
+  .factory('Plus', function (GAPI) {
+    var Plus = new GAPI('plus', 'v1', {
+      people:       ['get', 'list', {
+        activities: ['list']
+      }],
+      activities:   ['get', {
+        comments:   ['list']
+      }], 
+      comments:     ['get']
+    });
+
+    Plus.searchPeople = function () {};
+    Plus.listPeopleByActivity = function () {};
+    Plus.listActivities = function () {};
+    Plus.searchActivities = function () {};
+    Plus.insertMoment = function () {};
+    Plus.listMoments = function () {};
+    Plus.removeMoment = function () {};
+
+    return Plus;
+  })
