@@ -222,10 +222,20 @@ describe 'GAPI', ->
     it 'should refer to the correct url', ->
       expect(Youtube.url).toBe 'https://www.googleapis.com/youtube/v3/'
 
-    it 'should list activities'
+    it 'should list activities', ->
+      url = "#{Youtube.url}activities?home=true&part=snippet"
+      $httpBackend.expectGET(url, getHeaders).respond null
+      Youtube.listActivities({part:'snippet', home:true})
+      $httpBackend.flush()
+
     it 'should insert activities'
 
-    it 'should list channels'
+    it 'should list channels', ->
+      url = "#{Youtube.url}channels?mine=true&part=snippet"
+      $httpBackend.expectGET(url, getHeaders).respond null
+      Youtube.listChannels({part:'snippet', mine:true})
+      $httpBackend.flush()
+
     it 'should update channels'
     
     it 'should list guide categories'
@@ -243,17 +253,35 @@ describe 'GAPI', ->
     it 'should update live streams'
     it 'should delete live streams'
     
-    it 'should list playlist items'
+    it 'should list playlist items', ->
+      url = "#{Youtube.url}playlistItems?maxResults=50&part=snippet&playlistId=1234"
+      $httpBackend.expectGET(url, getHeaders).respond null
+      Youtube.listPlaylistItems 
+          part: 'snippet'
+          maxResults: 50
+          playlistId: '1234'
+      $httpBackend.flush()      
+
     it 'should insert playlist items'
     it 'should update playlist items'
     it 'should delete playlist items'
     
-    it 'should list playlists'
+    it 'should list playlists', ->
+      url = "#{Youtube.url}playlists?mine=true&part=snippet"
+      $httpBackend.expectGET(url, getHeaders).respond null
+      Youtube.listPlaylists({part:'snippet', mine:true})
+      $httpBackend.flush()
+
     it 'should insert playlists'
     it 'should update playlists'
     it 'should delete playlists'
     
-    it 'should list subscriptions'
+    it 'should list subscriptions', ->
+      url = "#{Youtube.url}subscriptions?mine=true&part=snippet"
+      $httpBackend.expectGET(url, getHeaders).respond null
+      Youtube.listSubscriptions({part:'snippet', mine:true})
+      $httpBackend.flush()
+
     it 'should insert subscriptions'
     it 'should delete subscriptions'
     
@@ -261,7 +289,12 @@ describe 'GAPI', ->
     
     it 'should list video categories'
     
-    it 'should list videos'
+    it 'should list videos', ->
+      url = "#{Youtube.url}videos?myRating=like&part=snippet"
+      $httpBackend.expectGET(url, getHeaders).respond null
+      Youtube.listVideos({part:'snippet', myRating:'like'})
+      $httpBackend.flush()
+
     it 'should insert videos'
     it 'should update videos'
     it 'should delete videos'
