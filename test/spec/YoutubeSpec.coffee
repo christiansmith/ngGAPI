@@ -210,7 +210,7 @@ describe 'GAPI', ->
       $httpBackend.flush()
     
 
-    # THUMBNAIL
+    # THUMBNAILS
 
     it 'should set thumbnails', ->
       url = "#{Youtube.url}thumbnails/set?videoId=123"

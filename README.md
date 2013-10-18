@@ -34,39 +34,60 @@ If you don't use Bower, just download `gapi.js` into your scripts directory.
 
 #### Youtube
 
-* Youtube.listActivities(params)
-* Youtube.insertActivities(data, params)
+Official Youtube DATA API (v3) [reference documentation](https://developers.google.com/youtube/v3/)
 
-* Youtube.listChannels(params)
-* Youtube.updateChannels(data, params)
+* [**Youtube.listActivities(params)**](https://developers.google.com/youtube/v3/docs/activities/list)
+* [**Youtube.insertActivities(data, params)**](https://developers.google.com/youtube/v3/docs/activities/insert)
 
-* Youtube.listGuideCategories(params)
+* Youtube.insertChannelBanners()
 
-* Youtube.listPlaylistItems(params)
-* Youtube.insertPlaylistItems(data, params)
-* Youtube.updatePlaylistItems(data, params)
-* Youtube.deletePlaylistItems(params)
+* [**Youtube.listChannels(params)**](https://developers.google.com/youtube/v3/docs/channels/list)
+* [**Youtube.updateChannels(data, params)**](https://developers.google.com/youtube/v3/docs/channels/update)
 
-* Youtube.listPlaylists(params)
-* Youtube.insertPlaylists(data, params)
-* Youtube.updatePlaylists(data, params)
-* Youtube.deletePlaylists(params)
+* [**Youtube.listGuideCategories(params)**](https://developers.google.com/youtube/v3/docs/guideCategories/list)
 
-* Youtube.search()
+* Youtube.bindLiveBroadcasts()
+* Youtube.controlLiveBroadcasts()
+* Youtube.transitionLiveBroadcasts()
+* Youtube.listLiveBroadcasts()
+* Youtube.insertLiveBroadcasts()
+* Youtube.updateLiveBroadcasts()
+* Youtube.deleteLiveBroadcasts()
 
-* Youtube.listSubscriptions(params)
-* Youtube.insertSubscriptions(data, params)
-* Youtube.deleteSubscriptions(params)
+* Youtube.listLiveStreams()
+* Youtube.insertLiveStreams()
+* Youtube.updateLiveStreams()
+* Youtube.deleteLiveStreams()
 
-* Youtube.setThumbnails(?)
+* [**Youtube.listPlaylistItems(params)**](https://developers.google.com/youtube/v3/docs/playlistItems/list)
+* [**Youtube.insertPlaylistItems(data, params)**](https://developers.google.com/youtube/v3/docs/playlistItems/insert)
+* [**Youtube.updatePlaylistItems(data, params)**](https://developers.google.com/youtube/v3/docs/playlistItems/update)
+* [**Youtube.deletePlaylistItems(params)**](https://developers.google.com/youtube/v3/docs/playlistItems/delete)
 
-* Youtube.listVideoCategories(params)
+* [**Youtube.listPlaylists(params)**](https://developers.google.com/youtube/v3/docs/playlists/list)
+* [**Youtube.insertPlaylists(data, params)**](https://developers.google.com/youtube/v3/docs/playlists/insert)
+* [**Youtube.updatePlaylists(data, params)**](https://developers.google.com/youtube/v3/docs/playlists/update)
+* [**Youtube.deletePlaylists(params)**](https://developers.google.com/youtube/v3/docs/playlists/delete)
 
-* Youtube.listVideos(params)
-* Youtube.insertVideos(data, params)
-* Youtube.updateVideos(data, params)
-* Youtube.deleteVideos(params)
+* [**Youtube.search()**](https://developers.google.com/youtube/v3/docs/search/list)
 
+* [**Youtube.listSubscriptions(params)**](https://developers.google.com/youtube/v3/docs/subscriptions/list)
+* [**Youtube.insertSubscriptions(data, params)**](https://developers.google.com/youtube/v3/docs/subscriptions/insert)
+* [**Youtube.deleteSubscriptions(params)**](https://developers.google.com/youtube/v3/docs/subscriptions/delete)
+
+* [**Youtube.setThumbnails(params)**](https://developers.google.com/youtube/v3/docs/thumbnails)
+
+* [**Youtube.listVideoCategories(params)**](https://developers.google.com/youtube/v3/docs/videoCategories/list)
+
+* [**Youtube.listVideos(params)**](https://developers.google.com/youtube/v3/docs/videos/list)
+* [**Youtube.insertVideos(data, params)**](https://developers.google.com/youtube/v3/docs/videos/insert)
+* [**Youtube.updateVideos(data, params)**](https://developers.google.com/youtube/v3/docs/videos/update)
+* [**Youtube.deleteVideos(params)**](https://developers.google.com/youtube/v3/docs/videos/delete)
+* [**Youtube.rateVideos(params)**](https://developers.google.com/youtube/v3/docs/videos/rate)
+* [**Youtube.getVideoRatings(params)**](https://developers.google.com/youtube/v3/docs/videos/getRating)
+
+* [**Youtube.setWatermarks()**](https://developers.google.com/youtube/v3/docs/watermarks/set)
+* [**Youtube.unsetWatermarks()**](https://developers.google.com/youtube/v3/docs/watermarks/unset)
 
 ## Development
 
