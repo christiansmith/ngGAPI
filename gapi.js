@@ -100,7 +100,7 @@ angular.module('gapi', [])
 
       createMethods(this, spec);
       
-      this.search = GAPI.search;
+      //this.search = GAPI.search;
     }
 
 
@@ -141,6 +141,9 @@ angular.module('gapi', [])
       $http(config).then(success, failure);
       return deferred.promise;
     }
+
+
+    GAPI.request = request;
 
 
     /**
@@ -198,9 +201,26 @@ angular.module('gapi', [])
     };
 
 
-    GAPI.set = function () {
-      return function () {};
+    GAPI.set = function (resource, parents) {
+      return function () {
+        return request({
+          method: 'POST',
+          url: resourceUrl(arguments, parents, this.url, resource) + '/set', 
+          params: params(arguments)
+        });
+      };
     };
+
+
+    GAPI.unset = function (resource, parents) {
+      return function () {
+        return request({
+          method: 'POST',
+          url: resourceUrl(arguments, parents, this.url, resource) + '/unset', 
+          params: params(arguments)
+        });
+      };
+    };    
     
 
     GAPI.patch = function () {
@@ -379,7 +399,6 @@ angular.module('gapi', [])
     var Youtube = new GAPI('youtube', 'v3', {
       activities:       ['list', 'insert'],
       channels:         ['list', 'update'],
-      channelBanners:   ['insert'],
       guideCategories:  ['list'],
       liveBroadcasts:   ['list', 'insert', 'update', 'delete'],
       liveStreams:      ['list', 'insert', 'update', 'delete'],
@@ -389,19 +408,42 @@ angular.module('gapi', [])
       thumbnails:       ['set'],
       videoCategories:  ['list'],
       videos:           ['list', 'insert', 'update', 'delete'],
-      watermarks:       ['set']
+      watermarks:       ['set', 'unset']
     });
 
     // Some methods don't fit the pattern
     // Define them explicitly here
+    Youtube.insertChannelBanners = function () {};
+
     Youtube.bindLiveBroadcasts = function () {};
     Youtube.controlLiveBroadcasts = function () {};
     Youtube.transitionLiveBroadcasts = function () {};
 
-    Youtube.rate = function () {};
-    Youtube.getRating = function () {};
+    Youtube.rateVideos = function (params) {
+      return GAPI.request({
+        method: 'POST',
+        url: Youtube.url + 'videos/rate', 
+        params: params
+      });
+    };
 
-    Youtube.unsetWatermarks = function () {};
+    Youtube.getVideoRating = function (params) {
+      return GAPI.request({
+        method: 'GET',
+        url: Youtube.url + 'videos/getRating', 
+        params: params
+      });      
+    };
+
+    //Youtube.unsetWatermarks = function () {};
+
+    Youtube.search = function (params) {
+      return GAPI.request({
+        method: 'GET',
+        url: Youtube.url + 'search',
+        params: params
+      });
+    }
 
     return Youtube;
   })

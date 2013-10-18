@@ -42,6 +42,7 @@ describe 'GAPI', ->
       resources: [
         'get'
         'set'
+        'unset'
         'list'
         'insert'
         'update'
@@ -124,9 +125,6 @@ describe 'GAPI', ->
       expect(typeof Service.deleteNested).toEqual 'function'
       expect(Service.deleteNested.toString()).toBe GAPI.delete('nested', ['resource']).toString()
 
-    it 'should define a search method on the constructed service', ->
-      expect(Service.search).toBe GAPI.search
-
 
   describe 'constructed service', ->
 
@@ -142,8 +140,25 @@ describe 'GAPI', ->
       Service.getNested('123', '456')
       $httpBackend.flush()
 
-    it 'should set a resource'
+    it 'should set a resource', ->
+      url = "#{Service.url}resources/set"
+      headers =
+        "Accept":"application/json, text/plain, */*"
+        "X-Requested-With":"XMLHttpRequest"
+        "Authorization":"Bearer 1234abcd"
+      $httpBackend.expectPOST(url, undefined, headers).respond null
+      Service.setResources()
+      $httpBackend.flush()    
 
+    it 'should unset a resource', ->
+      url = "#{Service.url}resources/unset"
+      headers =
+        "Accept":"application/json, text/plain, */*"
+        "X-Requested-With":"XMLHttpRequest"
+        "Authorization":"Bearer 1234abcd"
+      $httpBackend.expectPOST(url, undefined, headers).respond null
+      Service.unsetResources()
+      $httpBackend.flush()  
 
     it 'should list resources', ->
       url = "#{Service.url}resources"
@@ -197,9 +212,4 @@ describe 'GAPI', ->
       Service.deleteNested('123')
       $httpBackend.flush()
 
-    it 'should search', ->
-      url = "#{Service.url}search?maxResults=50&part=snippet&q=Raphael%20Rabello"
-      $httpBackend.expectGET(url, getHeaders).respond null
-      Service.search('Raphael Rabello')
-      $httpBackend.flush()
 
