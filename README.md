@@ -51,42 +51,42 @@ Official Youtube DATA API (v3) [reference documentation](https://developers.goog
   * [**Youtube.listGuideCategories(params)**](https://developers.google.com/youtube/v3/docs/guideCategories/list)
 
 * PlaylistItems
-  * [**Youtube.listPlaylistItems(params)**](https://<developers class="google ">  </developers>com/youtube/v3/docs/playlistItems/list)
-  * [**Youtube.insertPlaylistItems(data, params)**](https://<developers class="google ">  </developers>com/youtube/v3/docs/playlistItems/insert)
-  * [**Youtube.updatePlaylistItems(data, params)**](https://<developers class="google ">  </developers>com/youtube/v3/docs/playlistItems/update)
-  * [**Youtube.deletePlaylistItems(params)**](https://<developers class="google ">  </developers>com/youtube/v3/docs/playlistItems/delete)
+  * [**Youtube.listPlaylistItems(params)**](https://developers.google.com/youtube/v3/docs/playlistItems/list)
+  * [**Youtube.insertPlaylistItems(data, params)**](https://developers.google.com/youtube/v3/docs/playlistItems/insert)
+  * [**Youtube.updatePlaylistItems(data, params)**](https://developers.google.com/youtube/v3/docs/playlistItems/update)
+  * [**Youtube.deletePlaylistItems(params)**](https://developers.google.com/youtube/v3/docs/playlistItems/delete)
   
 * Playlists
-  * [**Youtube.listPlaylists(params)**](https://<developers class="google ">  </developers>com/youtube/v3/docs/playlists/list)
-  * [**Youtube.insertPlaylists(data, params)**](https://<developers class="google ">  </developers>com/youtube/v3/docs/playlists/insert)
-  * [**Youtube.updatePlaylists(data, params)**](https://<developers class="google ">  </developers>com/youtube/v3/docs/playlists/update)
-  * [**Youtube.deletePlaylists(params)**](https://<developers class="google ">  </developers>com/youtube/v3/docs/playlists/delete)
+  * [**Youtube.listPlaylists(params)**](https://developers.google.com/youtube/v3/docs/playlists/list)
+  * [**Youtube.insertPlaylists(data, params)**](https://developers.google.com/youtube/v3/docs/playlists/insert)
+  * [**Youtube.updatePlaylists(data, params)**](https://developers.google.com/youtube/v3/docs/playlists/update)
+  * [**Youtube.deletePlaylists(params)**](https://developers.google.com/youtube/v3/docs/playlists/delete)
   
 * Search
   * [**Youtube.search()**](https://developers.google.com/youtube/v3/docs/search/list)
   
 * Subscriptions
-  * [**Youtube.listSubscriptions(params)**](https://<developers class="google ">  </developers>com/youtube/v3/docs/subscriptions/list)
-  * [**Youtube.insertSubscriptions(data, params)**](https://<developers class="google ">  </developers>com/youtube/v3/docs/subscriptions/insert)
-  * [**Youtube.deleteSubscriptions(params)**](https://<developers class="google ">  </developers>com/youtube/v3/docs/subscriptions/delete)
+  * [**Youtube.listSubscriptions(params)**](https://developers.google.com/youtube/v3/docs/subscriptions/list)
+  * [**Youtube.insertSubscriptions(data, params)**](https://developers.google.com/youtube/v3/docs/subscriptions/insert)
+  * [**Youtube.deleteSubscriptions(params)**](https://developers.google.com/youtube/v3/docs/subscriptions/delete)
   
 * Thumbnails
-  * [**Youtube.setThumbnails(params)**](https://<developers class="google ">  </developers>com/youtube/v3/docs/thumbnails)
+  * [**Youtube.setThumbnails(params)**](https://developers.google.com/youtube/v3/docs/thumbnails)
   
 * VideoCategories
-  * [**Youtube.listVideoCategories(params)**](https://<developers class="google ">  </developers>com/youtube/v3/docs/videoCategories/list)
+  * [**Youtube.listVideoCategories(params)**](https://developers.google.com/youtube/v3/docs/videoCategories/list)
   
 * Videos
-  * [**Youtube.listVideos(params)**](https://<developers class="google "> </developers>com/youtube/v3/docs/videos/list)
-  * [**Youtube.insertVideos(data, params)**](https://<developers class="google "> </developers>com/youtube/v3/docs/videos/insert)
-  * [**Youtube.updateVideos(data, params)**](https://<developers class="google "> </developers>com/youtube/v3/docs/videos/update)
-  * [**Youtube.deleteVideos(params)**](https://<developers class="google "> </developers>com/youtube/v3/docs/videos/delete)
-  * [**Youtube.rateVideos(params)**](https://<developers class="google "> </developers>com/youtube/v3/docs/videos/rate)
-  * [**Youtube.getVideoRatings(params)**](https://<developers class="google ">  </developers>com/youtube/v3/docs/videos/getRating)
+  * [**Youtube.listVideos(params)**](https://developers.google.com/youtube/v3/docs/videos/list)
+  * [**Youtube.insertVideos(data, params)**](https://developers.google.com/youtube/v3/docs/videos/insert)
+  * [**Youtube.updateVideos(data, params)**](https://developers.google.com/youtube/v3/docs/videos/update)
+  * [**Youtube.deleteVideos(params)**](https://developers.google.com/youtube/v3/docs/videos/delete)
+  * [**Youtube.rateVideos(params)**](https://developers.google.com/youtube/v3/docs/videos/rate)
+  * [**Youtube.getVideoRatings(params)**](https://developers.google.com/youtube/v3/docs/videos/getRating)
   
 * Watermarks
-  * [**Youtube.setWatermarks()**](https://<developers class="google ">  </developers>com/youtube/v3/docs/watermarks/set)
-  * [**Youtube.unsetWatermarks()**](https://<developers class="google ">  </developers>com/youtube/v3/docs/watermarks/unset)
+  * [**Youtube.setWatermarks()**](https://developers.google.com/youtube/v3/docs/watermarks/set)
+  * [**Youtube.unsetWatermarks()**](https://developers.google.com/youtube/v3/docs/watermarks/unset)
 
 
 #### Calendar API
