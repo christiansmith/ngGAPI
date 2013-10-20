@@ -89,6 +89,28 @@ Official Youtube DATA API (v3) [reference documentation](https://developers.goog
   * [**Youtube.unsetWatermarks()**](https://developers.google.com/youtube/v3/docs/watermarks/unset)
 
 
+#### Google+
+
+* People
+  * [**Plus.getPeople(userId)**](https://developers.google.com/+/api/latest/people/get)
+  * [**Plus.searchPeople(params)**](https://developers.google.com/+/api/latest/people/search)
+  * [**Plus.listPeopleByActivity(activityId, collection)**](https://developers.google.com/+/api/latest/people/listByActivity)
+  * [**Plus.listPeople(userId, collection, params)**](https://developers.google.com/+/api/latest/people/list)
+
+* Activities
+  * [**Plus.listActivities(userId, collection, params)**](https://developers.google.com/+/api/latest/activities/list)
+  * [**Plus.getActivities(activityId)**](https://developers.google.com/+/api/latest/activities/get)
+  * [**Plus.searchActivities(params)**](https://developers.google.com/+/api/latest/activities/search)
+
+* Comments
+  * [**Plus.listComments(activityId, params)**](https://developers.google.com/+/api/latest/comments/list)
+  * [**Plus.getComments(commentId)**](https://developers.google.com/+/api/latest/comments/get)
+
+* Moments
+  * [**Plus.insertMoments(userId, collection, data, params)**](https://developers.google.com/+/api/latest/moments/insert)
+  * [**Plus.listMoments(userId, collection, params)**](https://developers.google.com/+/api/latest/moments/list)
+  * [**Plus.removeMoments(id)**](https://developers.google.com/+/api/latest/moments/remove)
+
 #### Calendar API
 
 * ACL
