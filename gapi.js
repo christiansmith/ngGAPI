@@ -573,7 +573,7 @@ angular.module('gapi', [])
         method: 'GET',
         url:    Calendar.url + ['calendars', calendarId, 'events', eventId, 'instances'].join('/'),
         params: params
-      })
+      });
     }
 
     Calendar.quickAdd = function (id, params) {
@@ -653,7 +653,7 @@ angular.module('gapi', [])
 
   .factory('Plus', function (GAPI) {
     var Plus = new GAPI('plus', 'v1', {
-      people:       ['get', 'list', {
+      people:       ['get', {
         activities: ['list']
       }],
       activities:   ['get', {
@@ -662,13 +662,61 @@ angular.module('gapi', [])
       comments:     ['get']
     });
 
-    Plus.searchPeople = function () {};
-    Plus.listPeopleByActivity = function () {};
-    Plus.listActivities = function () {};
-    Plus.searchActivities = function () {};
-    Plus.insertMoment = function () {};
-    Plus.listMoments = function () {};
-    Plus.removeMoment = function () {};
+    Plus.searchPeople = function (params) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Plus.url + 'people',
+        params: params
+      });     
+    };
+
+    Plus.listPeopleByActivity = function (activityId, collection, params) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Plus.url + ['activities', activityId, 'people', collection].join('/'),
+        params: params
+      });        
+    };
+    
+    Plus.listPeople = function (userId, collection, params) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Plus.url + ['people', userId, 'people', collection].join('/'),
+        params: params
+      });
+    }
+
+    Plus.searchActivities = function (params) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Plus.url + 'activities',
+        params: params
+      });  
+    };
+
+    Plus.insertMoments = function (userId, collection, data, params) {
+      return GAPI.request({
+        method: 'POST',
+        url:    Plus.url + ['people', userId, 'moments', collection].join('/'),
+        data:   data,
+        params: params
+      });      
+    };
+
+    Plus.listMoments = function (userId, collection, params) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Plus.url + ['people', userId, 'moments', collection].join('/'),
+        params: params
+      });  
+    };
+
+    Plus.removeMoments = function (id) {
+      return GAPI.request({
+        method: 'DELETE',
+        url:    Plus.url + ['moments', id].join('/')
+      });       
+    };
 
     return Plus;
   })
