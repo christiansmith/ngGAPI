@@ -47,6 +47,9 @@ angular.module('gapi', [])
      */
 
     function methodName (action, resource) {
+      // allow resources with a path prefix
+      resource = resource.split('/').pop()
+      // uppercase the first character
       resource = resource.charAt(0).toUpperCase() + resource.slice(1);
       return action + resource;
     }
@@ -221,11 +224,6 @@ angular.module('gapi', [])
         });
       };
     };    
-    
-
-    GAPI.patch = function () {
-      return function () {};
-    };
 
 
     GAPI.list = function (resource, parents) {
@@ -302,6 +300,37 @@ angular.module('gapi', [])
       };
     };
 
+  
+    GAPI.patch = function (resource, parents) {
+      return function () {
+        var args = arguments
+          , last = args[(args.length - 1).toString()]
+          , next = args[(args.length - 2).toString()]
+          , lastType = typeof last
+          , nextType = typeof next
+          , data
+          , params
+          ;
+
+        if (lastType === 'object' && nextType === 'object') {
+          data = next;
+          params = last;
+        }
+
+        if (lastType === 'object' && nextType !== 'object') {
+          data = last;
+          params = undefined;
+        }
+
+        return request({
+          method: 'PATCH',
+          url: resourceUrl(arguments, parents, this.url, resource),
+          data: data,
+          params: params
+        });
+      };
+    };
+
 
     GAPI.delete = function (resource, parents) {
       return function () {
@@ -325,7 +354,6 @@ angular.module('gapi', [])
         }
       });
     }
-
 
 
     /**
@@ -496,6 +524,92 @@ angular.module('gapi', [])
     // listBlogsByUser
     
     return Blogger;
+  })
+
+
+  /**
+   * Calendar API
+   */
+
+  .factory('Calendar', function (GAPI) {
+    var Calendar = new GAPI('calendar', 'v3', {
+      colors: ['get'],
+      calendars: ['get', 'insert', 'update', 'delete', 'patch', {
+        acl:     ['list', 'get', 'insert', 'update', 'delete', 'patch'],
+        events:  ['list', 'get', 'insert', 'update', 'delete', 'patch']
+      }],
+      'users/me/calendarList': ['list', 'get', 'insert', 'update', 'delete', 'patch'],
+      'users/me/settings': ['list', 'get']
+    });
+
+
+    Calendar.clearCalendar = function (id, params) {
+      return GAPI.request({
+        method: 'POST',
+        url:    Calendar.url + 'calendars/' + id + '/clear',
+        params: params
+      });
+    };
+
+    Calendar.importEvents = function (calendarId, data, params) {
+      return GAPI.request({
+        method: 'POST',
+        url:    Calendar.url + ['calendars', calendarId, 'events', 'import'].join('/'),
+        data:   data,
+        params: params
+      });
+    };
+
+    Calendar.moveEvents = function (calendarId, eventId, destinationId) {
+      return GAPI.request({
+        method: 'POST',
+        url:    Calendar.url + ['calendars', calendarId, 'events', eventId, 'move'].join('/'),
+        params: { destination: destinationId }
+      });
+    };
+
+    Calendar.listEventInstances = function (calendarId, eventId, params) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Calendar.url + ['calendars', calendarId, 'events', eventId, 'instances'].join('/'),
+        params: params
+      })
+    }
+
+    Calendar.quickAdd = function (id, params) {
+      return GAPI.request({
+        method: 'POST',
+        url:    Calendar.url + ['calendars', id, 'events', 'quickAdd'].join('/'),
+        params: params
+      });
+    }
+
+    Calendar.watchEvents = function (id, data, params) {
+      return GAPI.request({
+        method: 'POST',
+        url:    Calendar.url + ['calendars', id, 'events', 'watch'].join('/'),
+        data:   data,
+        params: params        
+      });
+    };
+
+    Calendar.freeBusy = function (data) {
+      return GAPI.request({
+        method: 'POST',
+        url:    Calendar.url + 'freeBusy',
+        data:   data      
+      });
+    }
+
+    Calendar.stopWatching = function (data) {
+      return GAPI.request({
+        method: 'POST',
+        url:    Calendar.url + 'channels/stop',
+        data:   data
+      });
+    };
+
+    return Calendar;
   })
 
 
