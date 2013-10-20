@@ -89,6 +89,59 @@ Official Youtube DATA API (v3) [reference documentation](https://developers.goog
 * [**Youtube.setWatermarks()**](https://developers.google.com/youtube/v3/docs/watermarks/set)
 * [**Youtube.unsetWatermarks()**](https://developers.google.com/youtube/v3/docs/watermarks/unset)
 
+
+#### Calendar API
+
+* ACL
+  * [**Calendar.deleteAcl(calendarId, ruleId)**](https://developers.google.com/google-apps/calendar/v3/reference/acl/delete)
+  * [**Calendar.getAcl(calendarId, ruleId)**](https://developers.google.com/google-apps/calendar/v3/reference/acl/get)
+  * [**Calendar.insertAcl(calendarId, data)**](https://developers.google.com/google-apps/calendar/v3/reference/acl/insert)
+  * [**Calendar.listAcl(calendarId)**](https://developers.google.com/google-apps/calendar/v3/reference/acl/list)
+  * [**Calendar.updateAcl(calendarId, ruleId, data)**](https://developers.google.com/google-apps/calendar/v3/reference/acl/update)
+  * [**Calendar.patchAcl(calendarId, ruleId, data)**](https://developers.google.com/google-apps/calendar/v3/reference/acl/patch)
+
+* CalendarList
+  * [**Calendar.deleteCalendarList(calendarId)**](https://developers.google.com/google-apps/calendar/v3/reference/calendarList/delete)
+  * [**Calendar.getCalendarList(calendarId)**](https://developers.google.com/google-apps/calendar/v3/reference/calendarList/get)
+  * [**Calendar.insertCalendarList(data)**](https://developers.google.com/google-apps/calendar/v3/reference/calendarList/insert)
+  * [**Calendar.listCalendarList(params)**](https://developers.google.com/google-apps/calendar/v3/reference/calendarList/list)
+  * [**Calendar.updateCalendarList(calendarId, data)**](https://developers.google.com/google-apps/calendar/v3/reference/calendarList/update)
+  * [**Calendar.patchCalendarList(calendarId, data)**](https://developers.google.com/google-apps/calendar/v3/reference/calendarList/patch)
+
+* Calendars
+  * [**Calendar.clearCalendars(calendarId)**](https://developers.google.com/google-apps/calendar/v3/reference/calendars/clear)
+  * [**Calendar.deleteCalendars(calendarId)**](https://developers.google.com/google-apps/calendar/v3/reference/calendars/delete)
+  * [**Calendar.getCalendars(calendarId)**](https://developers.google.com/google-apps/calendar/v3/reference/calendars/get)
+  * [**Calendar.insertCalendars(data)**](https://developers.google.com/google-apps/calendar/v3/reference/calendars/insert)
+  * [**Calendar.updateCalendars(calendarId, data)**](https://developers.google.com/google-apps/calendar/v3/reference/calendars/update)
+  * [**Calendar.patchCalendars(calendarId, data)**](https://developers.google.com/google-apps/calendar/v3/reference/calendars/patch)
+
+* Colors
+  * [**Calendar.getColors()**](https://developers.google.com/google-apps/calendar/v3/reference/colors/get)
+
+* Events
+  * [**Calendar.deleteEvents(calendarId, eventId)**](https://developers.google.com/google-apps/calendar/v3/reference/events/delete)
+  * [**Calendar.getEvents(calendarId, eventId, params)**](https://developers.google.com/google-apps/calendar/v3/reference/events/get)
+  * [**Calendar.importEvents(calendarId, data, params)**](https://developers.google.com/google-apps/calendar/v3/reference/events/import)
+  * [**Calendar.insertEvents(calendarId, data, params)**](https://developers.google.com/google-apps/calendar/v3/reference/events/insert)
+  * [**Calendar.listEventInstances(calendarId, eventId, params)**](https://developers.google.com/google-apps/calendar/v3/reference/events/instances)
+  * [**Calendar.listEvents(calendarId, params)**](https://developers.google.com/google-apps/calendar/v3/reference/events/list)
+  * [**Calendar.moveEvents(calendarId, eventId, params)**](https://developers.google.com/google-apps/calendar/v3/reference/events/move)
+  * [**Calendar.quickAdd(calendarId, params)**](https://developers.google.com/google-apps/calendar/v3/reference/events/quickAdd)
+  * [**Calendar.updateEvents(calendarId, eventId, data, params)**](https://developers.google.com/google-apps/calendar/v3/reference/events/update)
+  * [**Calendar.patchEvents(calendarId, eventId, data, params)**](https://developers.google.com/google-apps/calendar/v3/reference/events/patch)
+  * [**Calendar.watchEvents(calendarId, data)**](https://developers.google.com/google-apps/calendar/v3/reference/events/watch)
+
+* FreeBusy
+  * [**Calendar.freeBusy(data)**](https://developers.google.com/google-apps/calendar/v3/reference/freebusy/query)
+
+* Settings
+  * [**Calendar.getSettings(setting)**](https://developers.google.com/google-apps/calendar/v3/reference/settings/get)
+  * [**Calendar.listSettings()**](https://developers.google.com/google-apps/calendar/v3/reference/settings/list)
+
+* Channels
+  * [**Calendar.stopWatching(data)**](https://developers.google.com/google-apps/calendar/v3/reference/channels/stop)
+
 ## Development
 
 Installing the Karma test runner with `npm install karma -g`, then run the tests with `karma start`.
