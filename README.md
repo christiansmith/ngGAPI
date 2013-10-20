@@ -4,7 +4,7 @@ ngGAPI is a [Google APIs](https://code.google.com/apis/console/) client for Angu
 
 ## Status
 
-This is a work in progress and usage is subject to change. Currently only Youtube is supported, but I'm working (as of 10/3/2013) in my spare time to implement the rest of the APIs. Glad to spend some time pair programming with anyone that wants to contribute. If you want to use ngGAPI but something is missing or doesn't work as expected, please submit an issue. Thanks in advance!
+Currently Youtube, Google+, Google Calendar, and parts of Blogger and Google Drive are implemented. I'm working (as of 10/20/2013) in my spare time to support the rest of the APIs. [Erik Isaksen](https://github.com/Nevraeka) is helping with this and [an example app](https://github.com/christiansmith/ngOAuthExamples). Glad to spend some time pair programming with anyone else that wants to contribute. If you want to use ngGAPI but something is missing or doesn't work as expected, please submit an issue, or better yet a pull request. Thanks in advance!
 
 
 ## Install
@@ -24,11 +24,36 @@ If you don't use Bower, just download `gapi.js` into your scripts directory.
 
 ## Usage
 
-...
+Be sure to include "gapi" as a dependency in your main app module.
 
-### APIs
+    angular.module('myApp', ['gapi'])
 
-#### GAPI
+After you register your app in the [Google APIs Console](https://code.google.com/apis/console), configure ngGAPI with credentials and whatever scopes you need for your app.
+
+    angular.module('myApp')
+      .value('GoogleApp', {
+        apiKey: 'YOUR_API_KEY',
+        clientId: 'YOUR_CLIENT_ID',
+        scopes: [
+          // whatever scopes you need for your app, for example:
+          'https://www.googleapis.com/auth/drive',
+          'https://www.googleapis.com/auth/youtube',
+          'https://www.googleapis.com/auth/userinfo.profile'
+          // ...
+        ]  
+      })
+
+To use a specific service, inject it into your controllers by name. All GAPI methods return a promise.
+
+    angular.module('myApp')
+      .controller('VideosCtrl', function ($scope, Youtube) {
+        $scope.videos = Youtube.search({ part: 'snippet', q: 'Search terms' })
+      });
+
+
+## Services
+
+#### GAPI authorization
 
 * GAPI.init()
 
