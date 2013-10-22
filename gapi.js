@@ -634,11 +634,44 @@ angular.module('gapi', [])
       apps: ['get', 'list']
     });
 
-    Drive.copyFile    = function () {};
-    Drive.touchFile   = function () {};
-    Drive.trashFile   = function () {};
-    Drive.untrashFile = function () {};
-    Drive.watchFile   = function () {};
+    Drive.copyFile = function (fileId, data, params) {
+      return GAPI.request({
+        method: 'POST',
+        url:    Drive.url + ['files', fileId, 'copy'].join('/'),
+        data:   data,
+        params: params
+      });
+    };
+
+    Drive.touchFile   = function (fileId) {
+      return GAPI.request({
+        method: 'POST',
+        url:    Drive.url + ['files', fileId, 'touch'].join('/')
+      });      
+    };
+
+    Drive.trashFile   = function (fileId) {
+      return GAPI.request({
+        method: 'POST',
+        url:    Drive.url + ['files', fileId, 'trash'].join('/')
+      });  
+    };
+
+    Drive.untrashFile = function (fileId) {
+      return GAPI.request({
+        method: 'POST',
+        url:    Drive.url + ['files', fileId, 'untrash'].join('/')
+      });        
+    };
+
+    Drive.watchFile   = function (fileId, data) {
+      return GAPI.request({
+        method: 'POST',
+        url:    Drive.url + ['files', fileId, 'watch'].join('/'),
+        data:   data
+      });
+    };
+
     Drive.watchChanges = function () {};
     Drive.getPermissionIdForEmail = function () {};
     Drive.stopChannels = function () {};
