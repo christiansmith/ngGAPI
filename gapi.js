@@ -624,12 +624,12 @@ angular.module('gapi', [])
         parents:      ['get', 'list', 'insert', 'delete'],        
         permissions:  ['get', 'list', 'insert', 'update', 'delete', 'patch'],
         revisions:    ['get', 'list', 'update', 'delete', 'patch'],
-        comments:     ['get', 'list', 'insert', 'update', 'delete', 'patch'],
-        replies:      ['get', 'list', 'insert', 'update', 'delete', 'patch'],
+        comments:     ['get', 'list', 'insert', 'update', 'delete', 'patch', {
+          replies:      ['get', 'list', 'insert', 'update', 'delete', 'patch']
+        }],
         properties:   ['get', 'list', 'insert', 'update', 'delete', 'patch'],
-        realtime:     ['get', 'update']
+        realtime:     ['get']
       }],
-      about: ['get'],
       changes: ['get', 'list'],
       apps: ['get', 'list']
     });
@@ -672,9 +672,45 @@ angular.module('gapi', [])
       });
     };
 
-    Drive.watchChanges = function () {};
-    Drive.getPermissionIdForEmail = function () {};
-    Drive.stopChannels = function () {};
+    Drive.about = function (params) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Drive.url + 'about',
+        params: params
+      });
+    }
+
+    Drive.watchChanges = function (data) {
+      return GAPI.request({
+        method: 'POST',
+        url:    Drive.url + 'changes/watch',
+        data:   data
+      });
+    };
+
+    Drive.getPermissionIdForEmail = function (email) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Drive.url + ['permissionIds', email].join('/')
+      });
+    };
+
+    Drive.stopChannels = function (data) {
+      return GAPI.request({
+        method: 'POST',
+        url:    Drive.url + 'channels/stop',
+        data:   data
+      });
+    };
+
+    Drive.updateRealtime = function (fileId, params) {
+      return GAPI.request({
+        method: 'PUT', 
+        url:    Drive.url + ['files', fileId, 'realtime'].join('/'),
+        params: params
+      });
+    };
+
 
     return Drive;
   })
