@@ -510,19 +510,130 @@ angular.module('gapi', [])
     var Blogger = new GAPI('blogger', 'v3', {
       users:        ['get'],
       blogs:        ['get', {
-        pages:      ['list', 'get'],
-        posts:      ['list', 'get', 'insert', 'update', 'delete', {
-          comments: ['list', 'get']
+        pages:      ['list', 'get', 'insert', 'update', 'patch', 'delete'],
+        posts:      ['list', 'get', 'insert', 'update', 'patch', 'delete', {
+          comments: ['list', 'get', 'delete']
         }]
       }]
     });
 
-    // search
-    // patch
-    // getPostsByPath
-    // getBlogByUrl
-    // listBlogsByUser
+    Blogger.getBlogByUrl = function (params) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Blogger.url + 'blogs/byurl',
+        params: params
+      });
+    };
+
+    Blogger.listBlogsByUser = function (userId, params) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Blogger.url + ['users', userId, 'blogs'].join('/'),
+        params: params
+      });
+    };
+
+    Blogger.approveComments = function (blogId, postId, commentId) {
+      return GAPI.request({
+        method: 'POST', 
+        url:    Blogger.url + ['blogs', blogId, 
+                               'posts', postId, 
+                               'comments', commentId, 
+                               'approve'].join('/')
+      });
+    };
+
+    Blogger.listCommentsByBlog = function (blogId, params) {
+      return GAPI.request({
+        method: 'GET', 
+        url:    Blogger.url + ['blogs', blogId, 'comments'].join('/'),
+        params: params
+      });
+    };
+
+    Blogger.markCommentsAsSpam = function (blogId, postId, commentId) {
+      return GAPI.request({
+        method: 'POST', 
+        url:    Blogger.url + ['blogs', blogId, 
+                               'posts', postId, 
+                               'comments', commentId, 
+                               'spam'].join('/')
+      });
+    };
+
+    Blogger.removeContent = function (blogId, postId, commentId) {
+      return GAPI.request({
+        method: 'POST', 
+        url:    Blogger.url + ['blogs', blogId, 
+                               'posts', postId, 
+                               'comments', commentId, 
+                               'removecontent'].join('/')
+      });
+    };
+
+    Blogger.searchPosts = function (blogId, params) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Blogger.url + ['blogs', blogId, 'posts/search'].join('/'),
+        params: params
+      });
+    };
+
+    Blogger.getPostsByPath = function (blogId, params) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Blogger.url + ['blogs', blogId, 'posts/bypath'].join('/'),
+        params: params
+      });
+    };
+
+    Blogger.publishPosts = function (blogId, postId, params) {
+      return GAPI.request({
+        method: 'POST', 
+        url:    Blogger.url + ['blogs', blogId, 'posts', postId, 'publish'].join('/'),
+        params: params
+      });      
+    };
+
+    Blogger.revertPosts = function (blogId, postId) {
+      return GAPI.request({
+        method: 'POST', 
+        url:    Blogger.url + ['blogs', blogId, 'posts', postId, 'revert'].join('/')
+      });      
+    };
+
+    Blogger.getBlogUserInfos = function (userId, blogId, params) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Blogger.url + ['users', userId, 'blogs', blogId].join('/'),
+        params: params
+      });      
+    };
+
+    Blogger.getPageViews = function (blogId, params) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Blogger.url + ['blogs', blogId, 'pageviews'].join('/'),
+        params: params
+      });
+    };
     
+    Blogger.getPostUserInfos = function (userId, blogId, postId, params) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Blogger.url + ['users', userId, 'blogs', blogId, 'posts', postId].join('/'),
+        params: params
+      });      
+    };
+
+    Blogger.listPostUserInfos = function (userId, blogId, params) {
+      return GAPI.request({
+        method: 'GET',
+        url:    Blogger.url + ['users', userId, 'blogs', blogId, 'posts'].join('/'),
+        params: params
+      });      
+    };
+
     return Blogger;
   })
 
