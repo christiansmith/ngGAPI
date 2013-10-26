@@ -123,7 +123,7 @@ angular.module('gapi', [])
 
     
     /**
-     * HTTP Request Helper
+     * HTTP Request Helpers
      */
 
     function request (config) {
@@ -147,6 +147,55 @@ angular.module('gapi', [])
 
 
     GAPI.request = request;
+
+
+    GAPI.prototype.get = function () {
+      var args   = Array.prototype.slice.call(arguments)
+        , params = (typeof args[args.length - 1] === 'object') ? args.pop() : undefined
+        , url    = this.url + args.join('/')
+        ;
+
+      return request({
+        method: 'GET',
+        url:    url,
+        params: params
+      });
+    };
+
+
+
+    GAPI.prototype.post = function () {
+      var args = Array.prototype.slice.call(arguments)
+        , last = args[(args.length - 1).toString()]
+        , next = args[(args.length - 2).toString()]
+        , lastType = typeof last
+        , nextType = typeof next
+        , data
+        , params
+        ;
+
+      if (lastType === 'object' && nextType === 'object') {
+        params = args.pop();
+        data   = args.pop();
+      }
+
+      if (lastType === 'object' && next === undefined) {
+        params = args.pop();
+        data   = args.pop()
+      }
+
+      if (lastType === 'object' && nextType === 'string') {
+        data = args.pop();
+        params = undefined;
+      }
+
+      return request({
+        method: 'POST',
+        url:    this.url + args.join('/'),
+        data:   data,
+        params: params
+      });            
+    }
 
 
     /**
@@ -385,42 +434,6 @@ angular.module('gapi', [])
 
   /**
    * Youtube API
-   *
-   *   Youtube.listActivities(params)
-   *   Youtube.insertActivities(data, params)
-   *   
-   *   Youtube.listChannels(params)
-   *   Youtube.updateChannels(data, params)
-   *  
-   *   Youtube.listGuideCategories(params)
-   *  
-   *   Youtube.listPlaylistItems(params)
-   *   Youtube.insertPlaylistItems(data, params)
-   *   Youtube.updatePlaylistItems(data, params)
-   *   Youtube.deletePlaylistItems(params)
-   *  
-   *   Youtube.listPlaylists(params)
-   *   Youtube.insertPlaylists(data, params)
-   *   Youtube.updatePlaylists(data, params)
-   *   Youtube.deletePlaylists(params)
-   *  
-   *   Youtube.search()
-   *  
-   *   Youtube.listSubscriptions(params)
-   *   Youtube.insertSubscriptions(data, params)
-   *   Youtube.deleteSubscriptions(params)
-   *  
-   *   Youtube.setThumbnails(?)
-   *  
-   *   Youtube.listVideoCategories(params)
-   *  
-   *   Youtube.listVideos(params)
-   *   Youtube.insertVideos(data, params)
-   *   Youtube.updateVideos(data, params)
-   *   Youtube.deleteVideos(params)
-   *  
-   *   Youtube.getRating(?)
-   * 
    */
 
   .factory('Youtube', function (GAPI) {
@@ -479,29 +492,6 @@ angular.module('gapi', [])
 
   /**
    * Blogger API
-   *
-   *   Blogger.getBlogs(id)
-   *   Blogger.getBlogByUrl()
-   *   Blogger.getBlogsByUser
-   *   
-   *   Blogger.listComments(blogId, postId)
-   *   Blogger.getComments(blogId, postId, commentId)
-   *
-   *   Blogger.listPages(blogId)
-   *   Blogger.getPages(blogId, pageId)
-   *
-   *   Blogger.listPosts(blogId)
-   *   Blogger.getPosts(blogId, postId)
-   *   Blogger.insertPosts(blogId, postId)
-   *   Blogger.updatePosts(blogId, postId)
-   *   Blogger.deletePosts(blogId, postId)
-   *   Blogger.patchPosts(blogId, postId)
-   *   
-   *   Blogger.getPostByPath(blogId, path)
-   *   Blogger.searchPosts(blogId, query)
-   *   
-   *   Blogger.getUsers(userId)
-   *   
    */
 
 
@@ -517,124 +507,79 @@ angular.module('gapi', [])
       }]
     });
 
+
     Blogger.getBlogByUrl = function (params) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Blogger.url + 'blogs/byurl',
-        params: params
-      });
+      return Blogger.get('blogs', 'byurl', params);
     };
+
 
     Blogger.listBlogsByUser = function (userId, params) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Blogger.url + ['users', userId, 'blogs'].join('/'),
-        params: params
-      });
+      return Blogger.get('users', userId, 'blogs', params);
     };
+
 
     Blogger.approveComments = function (blogId, postId, commentId) {
-      return GAPI.request({
-        method: 'POST', 
-        url:    Blogger.url + ['blogs', blogId, 
-                               'posts', postId, 
-                               'comments', commentId, 
-                               'approve'].join('/')
-      });
+      return Blogger.post('blogs', blogId, 'posts', postId, 'comments', commentId, 'approve');
     };
+
 
     Blogger.listCommentsByBlog = function (blogId, params) {
-      return GAPI.request({
-        method: 'GET', 
-        url:    Blogger.url + ['blogs', blogId, 'comments'].join('/'),
-        params: params
-      });
+      return Blogger.get('blogs', blogId, 'comments', params);
     };
+
 
     Blogger.markCommentsAsSpam = function (blogId, postId, commentId) {
-      return GAPI.request({
-        method: 'POST', 
-        url:    Blogger.url + ['blogs', blogId, 
-                               'posts', postId, 
-                               'comments', commentId, 
-                               'spam'].join('/')
-      });
+      return Blogger.post('blogs', blogId, 'posts', postId, 'comments', commentId, 'spam');
     };
+
 
     Blogger.removeContent = function (blogId, postId, commentId) {
-      return GAPI.request({
-        method: 'POST', 
-        url:    Blogger.url + ['blogs', blogId, 
-                               'posts', postId, 
-                               'comments', commentId, 
-                               'removecontent'].join('/')
-      });
+      return Blogger.post('blogs', blogId, 'posts', postId, 'comments', commentId, 'removecontent');
     };
+
 
     Blogger.searchPosts = function (blogId, params) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Blogger.url + ['blogs', blogId, 'posts/search'].join('/'),
-        params: params
-      });
+      return Blogger.get('blogs', blogId, 'posts/search', params);
     };
+
 
     Blogger.getPostsByPath = function (blogId, params) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Blogger.url + ['blogs', blogId, 'posts/bypath'].join('/'),
-        params: params
-      });
+      return Blogger.get('blogs', blogId, 'posts/bypath', params);
     };
+
 
     Blogger.publishPosts = function (blogId, postId, params) {
-      return GAPI.request({
-        method: 'POST', 
-        url:    Blogger.url + ['blogs', blogId, 'posts', postId, 'publish'].join('/'),
-        params: params
-      });      
+      return Blogger.post('blogs', blogId, 'posts', postId, 'publish', undefined, params);      
     };
+
 
     Blogger.revertPosts = function (blogId, postId) {
-      return GAPI.request({
-        method: 'POST', 
-        url:    Blogger.url + ['blogs', blogId, 'posts', postId, 'revert'].join('/')
-      });      
+      return Blogger.post('blogs', blogId, 'posts', postId, 'revert');    
     };
+
 
     Blogger.getBlogUserInfos = function (userId, blogId, params) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Blogger.url + ['users', userId, 'blogs', blogId].join('/'),
-        params: params
-      });      
+      return Blogger.get('users', userId, 'blogs', blogId, params);     
     };
+
 
     Blogger.getPageViews = function (blogId, params) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Blogger.url + ['blogs', blogId, 'pageviews'].join('/'),
-        params: params
-      });
+      return Blogger.get('blogs', blogId, 'pageviews', params);
     };
+
     
     Blogger.getPostUserInfos = function (userId, blogId, postId, params) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Blogger.url + ['users', userId, 'blogs', blogId, 'posts', postId].join('/'),
-        params: params
-      });      
+      return Blogger.get('users', userId, 'blogs', blogId, 'posts', postId, params);
     };
+
 
     Blogger.listPostUserInfos = function (userId, blogId, params) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Blogger.url + ['users', userId, 'blogs', blogId, 'posts'].join('/'),
-        params: params
-      });      
+      return Blogger.get('users', userId, 'blogs', blogId, 'posts', params); 
     };
 
+
     return Blogger;
+
   })
 
 
