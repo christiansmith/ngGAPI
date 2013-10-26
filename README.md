@@ -57,6 +57,94 @@ To use a specific service, inject it into your controllers by name. All GAPI met
 
 * GAPI.init()
 
+
+#### Drive
+
+* Files
+  * [**Drive.getFiles(fileId, params)**](https://developers.google.com/drive/v2/reference/files/get)
+  * [**Drive.insertFiles(data, params)**](https://developers.google.com/drive/v2/reference/files/insert)  
+  * [**Drive.patchFiles(fileId, data, params)**](https://developers.google.com/drive/v2/reference/files/patch)
+  * [**Drive.updateFiles(fileId, data, params)**](https://developers.google.com/drive/v2/reference/files/update)
+  * [**Drive.copyFiles(fileId, data, params)**](https://developers.google.com/drive/v2/reference/files/copy)
+  * [**Drive.deleteFiles(fileId)**](https://developers.google.com/drive/v2/reference/files/delete)
+  * [**Drive.listFiles(params)**](https://developers.google.com/drive/v2/reference/files/list)
+  * [**Drive.touchFiles(fileId)**](https://developers.google.com/drive/v2/reference/files/touch)
+  * [**Drive.trashFiles(fileId)**](https://developers.google.com/drive/v2/reference/files/trash)
+  * [**Drive.untrashFiles(fileId)**](https://developers.google.com/drive/v2/reference/files/untrash)
+  * [**Drive.watchFiles(fileId, data)**](https://developers.google.com/drive/v2/reference/files/watch)
+
+* About
+  * [**Drive.about(params)**](https://developers.google.com/drive/v2/reference/about/get)
+
+* Changes
+  * [**Drive.getChanges(changeId)**](https://developers.google.com/drive/v2/reference/changes/get)
+  * [**Drive.listChanges(params)**](https://developers.google.com/drive/v2/reference/changes/list)
+  * [**Drive.watchChanges(data)**](https://developers.google.com/drive/v2/reference/changes/watch)
+
+* Children
+  * [**Drive.deleteChildren(folderId, childId)**](https://developers.google.com/drive/v2/reference/children/delete)
+  * [**Drive.getChildren(folderId, childId)**](https://developers.google.com/drive/v2/reference/children/get)
+  * [**Drive.insertChildren(folderId, data)**](https://developers.google.com/drive/v2/reference/children/insert)
+  * [**Drive.listChildren(folderId, params)**](https://developers.google.com/drive/v2/reference/children/list)
+
+* Parents
+  * [**Drive.deleteParents(fileId, parentId)**](https://developers.google.com/drive/v2/reference/parents/delete)
+  * [**Drive.getParents(fileId, parentId)**](https://developers.google.com/drive/v2/reference/parents/get)
+  * [**Drive.insertParents(fileId, data)**](https://developers.google.com/drive/v2/reference/parents/insert)
+  * [**Drive.listParents(fileId)**](https://developers.google.com/drive/v2/reference/parents/list)
+
+* Permissions
+  * [**Drive.deletePermissions(fileId, permissionId)**](https://developers.google.com/drive/v2/reference/permissions/delete)
+  * [**Drive.getPermissions(fileId, permissionId)**](https://developers.google.com/drive/v2/reference/permissions/get)
+  * [**Drive.insertPermissions(fileId, data, params)**](https://developers.google.com/drive/v2/reference/permissions/insert)
+  * [**Drive.listPermissions(fileId)**](https://developers.google.com/drive/v2/reference/permissions/list)
+  * [**Drive.patchPermissions(fileId, permissionId, data, params)**](https://developers.google.com/drive/v2/reference/permissions/patch)
+  * [**Drive.updatePermissions(fileId, permissionId, data, params)**](https://developers.google.com/drive/v2/reference/permissions/update)
+  * [**Drive.getPermissionIdForEmail(email)**](https://developers.google.com/drive/v2/reference/permissions/getIdForEmail)
+
+* Revisions
+  * [**Drive.deleteRevisions(fileId, revisionId)**](https://developers.google.com/drive/v2/reference/revisions/delete)
+  * [**Drive.getRevisions(fileId, revisionId)**](https://developers.google.com/drive/v2/reference/revisions/get)
+  * [**Drive.listRevisions(fileId)**](https://developers.google.com/drive/v2/reference/revisions/list)
+  * [**Drive.patchRevisions(fileId, revisionId, data)**](https://developers.google.com/drive/v2/reference/revisions/patch)
+  * [**Drive.updateRevisions(fileId, revisionId, data, params)**](https://developers.google.com/drive/v2/reference/revisions/update)
+
+* Apps
+  * [**Drive.listApps()**](https://developers.google.com/drive/v2/reference/apps/list)
+  * [**Drive.getApps(appId)**](https://developers.google.com/drive/v2/reference/apps/get)
+
+* Comments
+  * [**Drive.deleteComments(fileId, commentId)**](https://developers.google.com/drive/v2/reference/comments/delete)
+  * [**Drive.getComments(fileId, commentId, params)**](https://developers.google.com/drive/v2/reference/comments/get)
+  * [**Drive.insertComments(fileId, data, params)**](https://developers.google.com/drive/v2/reference/comments/insert)
+  * [**Drive.listComments(fileId, params)**](https://developers.google.com/drive/v2/reference/comments/list)
+  * [**Drive.patchComments(fileId, commentId, data, params)**](https://developers.google.com/drive/v2/reference/comments/patch)
+  * [**Drive.updateComments(fileId, commentId, data, params)**](https://developers.google.com/drive/v2/reference/comments/update)
+
+* Replies
+  * [**Drive.deleteReplies(fileId, commentId, replyId)**](https://developers.google.com/drive/v2/reference/replies/delete)
+  * [**Drive.getReplies(fileId, commentId, replyId, params)**](https://developers.google.com/drive/v2/reference/replies/get)
+  * [**Drive.insertReplies(fileId, commentId, data)**](https://developers.google.com/drive/v2/reference/replies/insert)
+  * [**Drive.listReplies(fileId, commentId, params)**](https://developers.google.com/drive/v2/reference/replies/list)
+  * [**Drive.patchReplies(fileId, commentId, replyId, data)**](https://developers.google.com/drive/v2/reference/replies/patch)
+  * [**Drive.updateReplies(fileId, commentId, replyId, data)**](https://developers.google.com/drive/v2/reference/replies/update)
+
+* Properties
+  * [**Drive.deleteProperties(fileId, propertyKey)**](https://developers.google.com/drive/v2/reference/properties/delete)
+  * [**Drive.getProperties(fileId, propertyKey)**](https://developers.google.com/drive/v2/reference/properties/get)
+  * [**Drive.insertProperties(fileId, data)**](https://developers.google.com/drive/v2/reference/properties/insert)
+  * [**Drive.listProperties(fileId)**](https://developers.google.com/drive/v2/reference/properties/list)
+  * [**Drive.patchProperties(fileId, propertyKey, data, params)**](https://developers.google.com/drive/v2/reference/properties/patch)
+  * [**Drive.updateProperties(fileId, propertyKey, data, params)**](https://developers.google.com/drive/v2/reference/properties/update)
+
+* Channels
+  * [**Drive.stopChannels(data)**](https://developers.google.com/drive/v2/reference/channels/stop)
+
+* Realtime
+  * [**Drive.getRealtime(fileId)**](https://developers.google.com/drive/v2/reference/realtime/get)
+  * [**Drive.updateRealtime(fileId, params)**](https://developers.google.com/drive/v2/reference/realtime/update)
+
+
 #### Youtube
 
 Official Youtube DATA API (v3) [reference documentation](https://developers.google.com/youtube/v3/)
