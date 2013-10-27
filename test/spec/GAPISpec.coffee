@@ -3,7 +3,7 @@ describe 'GAPI', ->
   { 
     GAPI,Service,
     $httpBackend,baseUrl,
-    getHeaders,postHeaders,putHeaders,deleteHeaders,
+    getHeaders,postHeaders,putHeaders,deleteHeaders,patchHeaders,noContentHeaders,
     authorization
   } = {}
 
@@ -27,7 +27,7 @@ describe 'GAPI', ->
       }
     }
 
-    getHeaders = deleteHeaders = 
+    getHeaders = deleteHeaders = patchHeaders = noContentHeaders =
       "Accept":"application/json, text/plain, */*"
       "X-Requested-With":"XMLHttpRequest"
       "Authorization":"Bearer 1234abcd"
@@ -126,7 +126,52 @@ describe 'GAPI', ->
       expect(Service.deleteNested.toString()).toBe GAPI.delete('nested', ['resource']).toString()
 
 
-  describe 'constructed service', ->
+  describe 'constructed service HTTP methods', ->
+
+    describe 'get', ->
+
+      it 'should build a path from arguments', ->
+        url = "#{Service.url}arbitrary/path/to/resource"
+        $httpBackend.expectGET(url, getHeaders).respond null
+        Service.get 'arbitrary', 'path', 'to', 'resource'
+        $httpBackend.flush()
+
+      it 'should encode parameters', ->
+        url = "#{Service.url}arbitrary/path/to/resource?foo=bar"
+        $httpBackend.expectGET(url, getHeaders).respond null
+        Service.get 'arbitrary', 'path', 'to', 'resource', { foo: 'bar' }
+        $httpBackend.flush()    
+
+      it 'should handle undefined params', ->
+        url = "#{Service.url}arbitrary/path/to/resource" 
+        $httpBackend.expectGET(url, getHeaders).respond null
+        Service.get 'arbitrary', 'path', 'to', 'resource', undefined
+        $httpBackend.flush()        
+
+    describe 'post', ->
+
+      it 'should build a path from arguments', ->
+        url = "#{Service.url}arbitrary/path/to/resource"
+        $httpBackend.expectPOST(url, undefined, noContentHeaders).respond null
+        Service.post 'arbitrary', 'path', 'to', 'resource'
+        $httpBackend.flush()   
+
+      it 'should encode parameters with undefined data', ->
+        url = "#{Service.url}arbitrary/path/to/resource?foo=bar"
+        $httpBackend.expectPOST(url, undefined, noContentHeaders).respond null
+        Service.post 'arbitrary', 'path', 'to', 'resource', undefined, {foo:'bar'}
+        $httpBackend.flush()
+
+      it 'should send data without parameters', ->
+        url = "#{Service.url}arbitrary/path/to/resource"
+        data = { foo: 'bar' }
+        $httpBackend.expectPOST(url, data, postHeaders).respond null
+        Service.post 'arbitrary', 'path', 'to', 'resource', data
+        $httpBackend.flush()
+
+
+
+  describe 'constructed service resource methods', ->
 
     it 'should get a resource', ->
       url = "#{Service.url}resources/123"

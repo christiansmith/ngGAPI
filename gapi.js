@@ -102,8 +102,6 @@ angular.module('gapi', [])
       this.url     = [ server, api, version, '' ].join('/');
 
       createMethods(this, spec);
-      
-      //this.search = GAPI.search;
     }
 
 
@@ -123,7 +121,7 @@ angular.module('gapi', [])
 
     
     /**
-     * HTTP Request Helpers
+     * HTTP Request Helper
      */
 
     function request (config) {
@@ -149,49 +147,57 @@ angular.module('gapi', [])
     GAPI.request = request;
 
 
+    /**
+     * HTTP GET method available on service instance
+     */
+
     GAPI.prototype.get = function () {
-      var args   = Array.prototype.slice.call(arguments)
-        , params = (typeof args[args.length - 1] === 'object') ? args.pop() : undefined
-        , url    = this.url + args.join('/')
+      var args = Array.prototype.slice.call(arguments)
+        , path = []
+        , params
         ;
+
+      args.forEach(function (arg, i) {
+        if (arg && typeof arg !== 'object') {
+          path.push(arg); 
+        } else {
+          params = arg
+        }
+      });  
 
       return request({
         method: 'GET',
-        url:    url,
+        url:    this.url + path.join('/'),
         params: params
       });
     };
 
 
+    /**
+     * HTTP POST method available on service instance
+     */
 
     GAPI.prototype.post = function () {
       var args = Array.prototype.slice.call(arguments)
-        , last = args[(args.length - 1).toString()]
-        , next = args[(args.length - 2).toString()]
-        , lastType = typeof last
-        , nextType = typeof next
+        , path = []
+        , other = 0
         , data
         , params
         ;
 
-      if (lastType === 'object' && nextType === 'object') {
-        params = args.pop();
-        data   = args.pop();
-      }
-
-      if (lastType === 'object' && next === undefined) {
-        params = args.pop();
-        data   = args.pop()
-      }
-
-      if (lastType === 'object' && nextType === 'string') {
-        data = args.pop();
-        params = undefined;
-      }
+      args.forEach(function (arg, i) {
+        if (!arg || typeof arg === 'object') { // if the arg is not part of the path
+          other += 1;                          // increment the number of nonpath args
+          if (other === 1) { data   = arg; }
+          if (other === 2) { params = arg; }
+        } else {                               // if the arg is defined and not and object
+          path.push(arg);                      // push to the path array
+        }
+      });
 
       return request({
         method: 'POST',
-        url:    this.url + args.join('/'),
+        url:    this.url + path.join('/'),
         data:   data,
         params: params
       });            
@@ -225,17 +231,39 @@ angular.module('gapi', [])
 
 
     /**
-     * Get params from last argument
+     * Parse params from arguments
      */
 
-    function params (args) {
+    function parseParams (args) {
       var last = args[(args.length - 1).toString()];
       return (typeof last === 'object') ? last : null      
     }
 
 
     /**
-     * General API methods
+     * Parse data and params from arguments
+     */
+
+    function parseDataParams (a) {
+        var args = Array.prototype.slice.call(a)
+          , parsedArgs = {}
+          , other = 0
+          ;
+
+        args.forEach(function (arg, i) {
+          if (!arg || typeof arg === 'object') {
+            other += 1;                         
+            if (other === 1) { parsedArgs.data   = arg; }
+            if (other === 2) { parsedArgs.params = arg; }
+          } 
+        });
+
+        return parsedArgs;
+    }
+
+
+    /**
+     * Resource methods
      * 
      * These methods are used to construct a service.
      * They are not intended to be called directly on GAPI.
@@ -246,8 +274,8 @@ angular.module('gapi', [])
       return function () {
         return request({
           method: 'GET',
-          url: resourceUrl(arguments, parents, this.url, resource),
-          params: params(arguments)
+          url:    resourceUrl(arguments, parents, this.url, resource),
+          params: parseParams(arguments)
         });
       };
     };
@@ -257,8 +285,8 @@ angular.module('gapi', [])
       return function () {
         return request({
           method: 'POST',
-          url: resourceUrl(arguments, parents, this.url, resource) + '/set', 
-          params: params(arguments)
+          url:    resourceUrl(arguments, parents, this.url, resource) + '/set', 
+          params: parseParams(arguments)
         });
       };
     };
@@ -268,8 +296,8 @@ angular.module('gapi', [])
       return function () {
         return request({
           method: 'POST',
-          url: resourceUrl(arguments, parents, this.url, resource) + '/unset', 
-          params: params(arguments)
+          url:    resourceUrl(arguments, parents, this.url, resource) + '/unset', 
+          params: parseParams(arguments)
         });
       };
     };    
@@ -279,41 +307,21 @@ angular.module('gapi', [])
       return function () {
         return request({
           method: 'GET',
-          url: resourceUrl(arguments, parents, this.url, resource),
-          params: params(arguments)
+          url:    resourceUrl(arguments, parents, this.url, resource),
+          params: parseParams(arguments)
         });
       };
     };
     
 
-    // UGLY REPETITION FROM LINES 214 to 231
-    // ON LINES 246 to 263
     GAPI.insert = function (resource, parents) {
       return function () {
-        var args = arguments
-          , last = args[(args.length - 1).toString()]
-          , next = args[(args.length - 2).toString()]
-          , lastType = typeof last
-          , nextType = typeof next
-          , data
-          , params
-          ;
-
-        if (lastType === 'object' && nextType === 'object') {
-          data = next;
-          params = last;
-        }
-
-        if (lastType === 'object' && nextType !== 'object') {
-          data = last;
-          params = undefined;
-        }
-
+        var args = parseDataParams(arguments);
         return request({
           method: 'POST',
-          url: resourceUrl(arguments, parents, this.url, resource), 
-          data: data,
-          params: params
+          url:    resourceUrl(arguments, parents, this.url, resource), 
+          data:   args.data,
+          params: args.params
         });
       };
     };
@@ -321,30 +329,12 @@ angular.module('gapi', [])
 
     GAPI.update = function (resource, parents) {
       return function () {
-        var args = arguments
-          , last = args[(args.length - 1).toString()]
-          , next = args[(args.length - 2).toString()]
-          , lastType = typeof last
-          , nextType = typeof next
-          , data
-          , params
-          ;
-
-        if (lastType === 'object' && nextType === 'object') {
-          data = next;
-          params = last;
-        }
-
-        if (lastType === 'object' && nextType !== 'object') {
-          data = last;
-          params = undefined;
-        }
-
+        var args = parseDataParams(arguments);
         return request({
           method: 'PUT',
-          url: resourceUrl(arguments, parents, this.url, resource),
-          data: data,
-          params: params
+          url:    resourceUrl(arguments, parents, this.url, resource),
+          data:   args.data,
+          params: args.params
         });
       };
     };
@@ -352,30 +342,12 @@ angular.module('gapi', [])
   
     GAPI.patch = function (resource, parents) {
       return function () {
-        var args = arguments
-          , last = args[(args.length - 1).toString()]
-          , next = args[(args.length - 2).toString()]
-          , lastType = typeof last
-          , nextType = typeof next
-          , data
-          , params
-          ;
-
-        if (lastType === 'object' && nextType === 'object') {
-          data = next;
-          params = last;
-        }
-
-        if (lastType === 'object' && nextType !== 'object') {
-          data = last;
-          params = undefined;
-        }
-
+        var args = parseDataParams(arguments);
         return request({
           method: 'PATCH',
-          url: resourceUrl(arguments, parents, this.url, resource),
-          data: data,
-          params: params
+          url:    resourceUrl(arguments, parents, this.url, resource),
+          data:   args.data,
+          params: args.params
         });
       };
     };
@@ -385,24 +357,11 @@ angular.module('gapi', [])
       return function () {
         return request({
           method: 'DELETE',
-          url: resourceUrl(arguments, parents, this.url, resource),
-          params: params(arguments)
+          url:    resourceUrl(arguments, parents, this.url, resource),
+          params: parseParams(arguments)
         });
       };
     };
-
-
-    GAPI.search = function (query) {
-      return request({
-        method: 'GET',
-        url: this.url + 'search',
-        params: {
-          q: query,
-          part: 'snippet',
-          maxResults: 50
-        }
-      });
-    }
 
 
     /**
@@ -461,29 +420,15 @@ angular.module('gapi', [])
     Youtube.transitionLiveBroadcasts = function () {};
 
     Youtube.rateVideos = function (params) {
-      return GAPI.request({
-        method: 'POST',
-        url: Youtube.url + 'videos/rate', 
-        params: params
-      });
+      return Youtube.post('videos', 'rate', undefined, params);
     };
 
     Youtube.getVideoRating = function (params) {
-      return GAPI.request({
-        method: 'GET',
-        url: Youtube.url + 'videos/getRating', 
-        params: params
-      });      
+      return Youtube.get('videos', 'getRating', params);     
     };
 
-    //Youtube.unsetWatermarks = function () {};
-
     Youtube.search = function (params) {
-      return GAPI.request({
-        method: 'GET',
-        url: Youtube.url + 'search',
-        params: params
-      });
+      return Youtube.get('search', params);
     }
 
     return Youtube;
@@ -600,69 +545,37 @@ angular.module('gapi', [])
 
 
     Calendar.clearCalendar = function (id, params) {
-      return GAPI.request({
-        method: 'POST',
-        url:    Calendar.url + 'calendars/' + id + '/clear',
-        params: params
-      });
+      return Calendar.post('calendars', id, 'clear', undefined, params);
     };
 
     Calendar.importEvents = function (calendarId, data, params) {
-      return GAPI.request({
-        method: 'POST',
-        url:    Calendar.url + ['calendars', calendarId, 'events', 'import'].join('/'),
-        data:   data,
-        params: params
-      });
+      return Calendar.post('calendars', calendarId, 'events', 'import', data, params);
     };
 
     Calendar.moveEvents = function (calendarId, eventId, destinationId) {
-      return GAPI.request({
-        method: 'POST',
-        url:    Calendar.url + ['calendars', calendarId, 'events', eventId, 'move'].join('/'),
-        params: { destination: destinationId }
+      return Calendar.post('calendars', calendarId, 'events', eventId, 'move', undefined, {
+        destination: destinationId
       });
     };
 
     Calendar.listEventInstances = function (calendarId, eventId, params) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Calendar.url + ['calendars', calendarId, 'events', eventId, 'instances'].join('/'),
-        params: params
-      });
-    }
+      return Calendar.get('calendars', calendarId, 'events', eventId, 'instances', params);
+    };
 
     Calendar.quickAdd = function (id, params) {
-      return GAPI.request({
-        method: 'POST',
-        url:    Calendar.url + ['calendars', id, 'events', 'quickAdd'].join('/'),
-        params: params
-      });
-    }
+      return Calendar.post('calendars', id, 'events', 'quickAdd', undefined, params);
+    };
 
     Calendar.watchEvents = function (id, data, params) {
-      return GAPI.request({
-        method: 'POST',
-        url:    Calendar.url + ['calendars', id, 'events', 'watch'].join('/'),
-        data:   data,
-        params: params        
-      });
+      return Calendar.post('calendars', id, 'events', 'watch', data, params);
     };
 
     Calendar.freeBusy = function (data) {
-      return GAPI.request({
-        method: 'POST',
-        url:    Calendar.url + 'freeBusy',
-        data:   data      
-      });
+      return Calendar.post('freeBusy', data);
     }
 
     Calendar.stopWatching = function (data) {
-      return GAPI.request({
-        method: 'POST',
-        url:    Calendar.url + 'channels/stop',
-        data:   data
-      });
+      return Calendar.post('channels', 'stop', data)
     };
 
     return Calendar;
@@ -691,72 +604,39 @@ angular.module('gapi', [])
     });
 
     Drive.copyFile = function (fileId, data, params) {
-      return GAPI.request({
-        method: 'POST',
-        url:    Drive.url + ['files', fileId, 'copy'].join('/'),
-        data:   data,
-        params: params
-      });
+      return Drive.post('files', fileId, 'copy', data, params);
     };
 
     Drive.touchFile   = function (fileId) {
-      return GAPI.request({
-        method: 'POST',
-        url:    Drive.url + ['files', fileId, 'touch'].join('/')
-      });      
+      return Drive.post('files', fileId, 'touch');  
     };
 
     Drive.trashFile   = function (fileId) {
-      return GAPI.request({
-        method: 'POST',
-        url:    Drive.url + ['files', fileId, 'trash'].join('/')
-      });  
+      return Drive.post('files', fileId, 'trash');
     };
 
     Drive.untrashFile = function (fileId) {
-      return GAPI.request({
-        method: 'POST',
-        url:    Drive.url + ['files', fileId, 'untrash'].join('/')
-      });        
+      return Drive.post('files', fileId, 'untrash');      
     };
 
     Drive.watchFile   = function (fileId, data) {
-      return GAPI.request({
-        method: 'POST',
-        url:    Drive.url + ['files', fileId, 'watch'].join('/'),
-        data:   data
-      });
+      return Drive.post('files', fileId, 'watch', data);
     };
 
     Drive.about = function (params) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Drive.url + 'about',
-        params: params
-      });
+      return Drive.get('about', params);
     }
 
     Drive.watchChanges = function (data) {
-      return GAPI.request({
-        method: 'POST',
-        url:    Drive.url + 'changes/watch',
-        data:   data
-      });
+      return Drive.post('changes', 'watch', data);
     };
 
     Drive.getPermissionIdForEmail = function (email) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Drive.url + ['permissionIds', email].join('/')
-      });
+      return Drive.get('permissionIds', email);
     };
 
     Drive.stopChannels = function (data) {
-      return GAPI.request({
-        method: 'POST',
-        url:    Drive.url + 'channels/stop',
-        data:   data
-      });
+      return Drive.post('channels', 'stop', data);
     };
 
     Drive.updateRealtime = function (fileId, params) {
@@ -788,52 +668,27 @@ angular.module('gapi', [])
     });
 
     Plus.searchPeople = function (params) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Plus.url + 'people',
-        params: params
-      });     
+      return Plus.get('people', params);  
     };
 
     Plus.listPeopleByActivity = function (activityId, collection, params) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Plus.url + ['activities', activityId, 'people', collection].join('/'),
-        params: params
-      });        
+      return Plus.get('activities', activityId, 'people', collection, params);    
     };
     
     Plus.listPeople = function (userId, collection, params) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Plus.url + ['people', userId, 'people', collection].join('/'),
-        params: params
-      });
+      return Plus.get('people', userId, 'people', collection, params);
     }
 
     Plus.searchActivities = function (params) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Plus.url + 'activities',
-        params: params
-      });  
+      return Plus.get('activities', params);
     };
 
     Plus.insertMoments = function (userId, collection, data, params) {
-      return GAPI.request({
-        method: 'POST',
-        url:    Plus.url + ['people', userId, 'moments', collection].join('/'),
-        data:   data,
-        params: params
-      });      
+      return Plus.post('people', userId, 'moments', collection, data, params);      
     };
 
     Plus.listMoments = function (userId, collection, params) {
-      return GAPI.request({
-        method: 'GET',
-        url:    Plus.url + ['people', userId, 'moments', collection].join('/'),
-        params: params
-      });  
+      return Plus.get('people', userId, 'moments', collection, params);
     };
 
     Plus.removeMoments = function (id) {
