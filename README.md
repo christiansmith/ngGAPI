@@ -1,6 +1,6 @@
 # ngGAPI
 
-ngGAPI is a [Google APIs](https://code.google.com/apis/console/) client for AngularJS. 
+ngGAPI is a [Google APIs](https://code.google.com/apis/console/) client for AngularJS.
 
 ## Status
 
@@ -11,9 +11,9 @@ Currently Youtube, Google+, Google Calendar, and parts of Blogger and Google Dri
 
 [Bower](http://bower.io/) is the quickest way to include ngGAPI in your project.
 
-    $ bower install git@github.com:christiansmith/ngGAPI.git --save
+    $ bower install https://github.com/christiansmith/ngGAPI.git --save
 
-    <script src="components/ngGAPI/gapi.js"></script>
+    <script src="bower_components/ngGAPI/gapi.js"></script>
 
 If you don't use Bower, just download `gapi.js` into your scripts directory.
 
@@ -40,7 +40,7 @@ After you register your app in the [Google APIs Console](https://code.google.com
           'https://www.googleapis.com/auth/youtube',
           'https://www.googleapis.com/auth/userinfo.profile'
           // ...
-        ]  
+        ]
       })
 
 To use a specific service, inject it into your controllers by name. All GAPI methods return a promise.
@@ -62,7 +62,7 @@ To use a specific service, inject it into your controllers by name. All GAPI met
 
 * Files
   * [**Drive.getFiles(fileId, params)**](https://developers.google.com/drive/v2/reference/files/get)
-  * [**Drive.insertFiles(data, params)**](https://developers.google.com/drive/v2/reference/files/insert)  
+  * [**Drive.insertFiles(data, params)**](https://developers.google.com/drive/v2/reference/files/insert)
   * [**Drive.patchFiles(fileId, data, params)**](https://developers.google.com/drive/v2/reference/files/patch)
   * [**Drive.updateFiles(fileId, data, params)**](https://developers.google.com/drive/v2/reference/files/update)
   * [**Drive.copyFiles(fileId, data, params)**](https://developers.google.com/drive/v2/reference/files/copy)
@@ -168,27 +168,27 @@ Official Youtube DATA API (v3) [reference documentation](https://developers.goog
   * [**Youtube.insertPlaylistItems(data, params)**](https://developers.google.com/youtube/v3/docs/playlistItems/insert)
   * [**Youtube.updatePlaylistItems(data, params)**](https://developers.google.com/youtube/v3/docs/playlistItems/update)
   * [**Youtube.deletePlaylistItems(params)**](https://developers.google.com/youtube/v3/docs/playlistItems/delete)
-  
+
 * Playlists
   * [**Youtube.listPlaylists(params)**](https://developers.google.com/youtube/v3/docs/playlists/list)
   * [**Youtube.insertPlaylists(data, params)**](https://developers.google.com/youtube/v3/docs/playlists/insert)
   * [**Youtube.updatePlaylists(data, params)**](https://developers.google.com/youtube/v3/docs/playlists/update)
   * [**Youtube.deletePlaylists(params)**](https://developers.google.com/youtube/v3/docs/playlists/delete)
-  
+
 * Search
   * [**Youtube.search()**](https://developers.google.com/youtube/v3/docs/search/list)
-  
+
 * Subscriptions
   * [**Youtube.listSubscriptions(params)**](https://developers.google.com/youtube/v3/docs/subscriptions/list)
   * [**Youtube.insertSubscriptions(data, params)**](https://developers.google.com/youtube/v3/docs/subscriptions/insert)
   * [**Youtube.deleteSubscriptions(params)**](https://developers.google.com/youtube/v3/docs/subscriptions/delete)
-  
+
 * Thumbnails
   * [**Youtube.setThumbnails(params)**](https://developers.google.com/youtube/v3/docs/thumbnails)
-  
+
 * VideoCategories
   * [**Youtube.listVideoCategories(params)**](https://developers.google.com/youtube/v3/docs/videoCategories/list)
-  
+
 * Videos
   * [**Youtube.listVideos(params)**](https://developers.google.com/youtube/v3/docs/videos/list)
   * [**Youtube.insertVideos(data, params)**](https://developers.google.com/youtube/v3/docs/videos/insert)
@@ -196,7 +196,7 @@ Official Youtube DATA API (v3) [reference documentation](https://developers.goog
   * [**Youtube.deleteVideos(params)**](https://developers.google.com/youtube/v3/docs/videos/delete)
   * [**Youtube.rateVideos(params)**](https://developers.google.com/youtube/v3/docs/videos/rate)
   * [**Youtube.getVideoRatings(params)**](https://developers.google.com/youtube/v3/docs/videos/getRating)
-  
+
 * Watermarks
   * [**Youtube.setWatermarks()**](https://developers.google.com/youtube/v3/docs/watermarks/set)
   * [**Youtube.unsetWatermarks()**](https://developers.google.com/youtube/v3/docs/watermarks/unset)
