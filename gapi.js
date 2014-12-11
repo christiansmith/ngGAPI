@@ -370,18 +370,36 @@ angular.module('gapi', [])
 
     GAPI.init = function () {
       var app = GAPI.app
-        , deferred = $q.defer();
+        , deferred = $q.defer(),
+
+        onAuth = function () {
+          app.oauthToken = gapi.auth.getToken();
+          deferred.resolve(app);
+          console.log('authorization', app)
+        };
+
+
 
       gapi.load('auth', function () {
         gapi.auth.authorize({
           client_id: app.clientId,
           scope: app.scopes,
-          immediate: false     
-        }, function() {
-          app.oauthToken = gapi.auth.getToken();
-          deferred.resolve(app);
-          console.log('authorization', app)
-        });
+          immediate: true     
+          }, function (response) {
+
+            if (response.status.signed_in === true) {
+              onAuth();
+            } else {
+
+              gapi.auth.authorize({
+                client_id: app.clientId,
+                scope: app.scopes,
+                immediate: false     
+                }, onAuth);
+            }
+
+
+          });
       });
 
       return deferred.promise;  
