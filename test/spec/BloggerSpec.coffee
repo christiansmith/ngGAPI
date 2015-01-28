@@ -1,6 +1,6 @@
 describe 'GAPI', ->
 
-  { 
+  {
     GAPI,Blogger,
     $httpBackend,baseUrl,
     getHeaders,postHeaders,putHeaders,deleteHeaders,patchHeaders,noContentHeaders,
@@ -9,10 +9,10 @@ describe 'GAPI', ->
 
 
   angular.module('gapi')
-    .value 'GoogleApp', 
+    .value 'GoogleApp',
       apiKey: '1234'
       clientId: 'abcd'
-    
+
 
   beforeEach module 'gapi'
 
@@ -27,16 +27,19 @@ describe 'GAPI', ->
       }
     }
 
-    getHeaders = deleteHeaders = patchHeaders = noContentHeaders =
-      "Accept":"application/json, text/plain, */*"
-      "X-Requested-With":"XMLHttpRequest"
+    getHeaders = deleteHeaders = noContentHeaders =
       "Authorization":"Bearer 1234abcd"
+      "Accept":"application/json, text/plain, */*"
+
+    patchHeaders =
+      "Authorization":"Bearer 1234abcd"
+      "Accept":"application/json, text/plain, */*"
+      "Content-Type":"application/json;charset=utf-8"
 
     postHeaders = putHeaders =
-      "Accept":"application/json, text/plain, */*"
-      "X-Requested-With":"XMLHttpRequest"
-      "Content-Type":"application/json;charset=utf-8"
       "Authorization":"Bearer 1234abcd"
+      "Accept":"application/json, text/plain, */*"
+      "Content-Type":"application/json;charset=utf-8"
 
 
   afterEach ->
@@ -64,7 +67,7 @@ describe 'GAPI', ->
     it 'should get blog by id', ->
       url = "#{Blogger.url}blogs/xyz"
       $httpBackend.expectGET(url, getHeaders).respond null
-      Blogger.getBlogs 'xyz' 
+      Blogger.getBlogs 'xyz'
       $httpBackend.flush()
 
     it 'should get blog by url', ->
@@ -98,7 +101,7 @@ describe 'GAPI', ->
       url = "#{Blogger.url}blogs/123/posts/456/comments/789/approve"
       $httpBackend.expectPOST(url, undefined, noContentHeaders).respond null
       Blogger.approveComments '123', '456', '789'
-      $httpBackend.flush()      
+      $httpBackend.flush()
 
     it 'should delete a comment', ->
       url = "#{Blogger.url}blogs/123/posts/456/comments/789"
@@ -126,7 +129,7 @@ describe 'GAPI', ->
 
 
     # PAGES
-    
+
     it 'should list pages', ->
       url = "#{Blogger.url}blogs/123/pages?fetchBodies=true"
       $httpBackend.expectGET(url, getHeaders).respond null
@@ -147,30 +150,30 @@ describe 'GAPI', ->
 
     it 'should insert a page', ->
       url = "#{Blogger.url}blogs/123/pages"
-      data =   
+      data =
         title: 'string'
         content: 'string'
       $httpBackend.expectPOST(url, data, postHeaders).respond null
       Blogger.insertPages '123', data
-      $httpBackend.flush() 
+      $httpBackend.flush()
 
     it 'should patch a page', ->
       url = "#{Blogger.url}blogs/123/pages/456"
-      data =   
+      data =
         title: 'string'
-        content: 'string'      
+        content: 'string'
       $httpBackend.expectPATCH(url, data, patchHeaders).respond null
       Blogger.patchPages '123', '456', data
-      $httpBackend.flush() 
+      $httpBackend.flush()
 
     it 'should update a page', ->
       url = "#{Blogger.url}blogs/123/pages/456"
-      data =   
+      data =
         title: 'string'
-        content: 'string'      
+        content: 'string'
       $httpBackend.expectPUT(url, data, putHeaders).respond null
       Blogger.updatePages '123', '456', data
-      $httpBackend.flush() 
+      $httpBackend.flush()
 
 
     # POSTS
@@ -195,7 +198,7 @@ describe 'GAPI', ->
 
     it 'should insert a post', ->
       url = "#{Blogger.url}blogs/123/posts?isDraft=true"
-      data =   
+      data =
         title: 'string'
         content: 'string'
       $httpBackend.expectPOST(url, data, postHeaders).respond null
@@ -216,21 +219,21 @@ describe 'GAPI', ->
 
     it 'should patch a post', ->
       url = "#{Blogger.url}blogs/123/posts/456"
-      data =   
+      data =
         title: 'string'
-        content: 'string'      
+        content: 'string'
       $httpBackend.expectPATCH(url, data, patchHeaders).respond null
       Blogger.patchPosts '123', '456', data
-      $httpBackend.flush() 
+      $httpBackend.flush()
 
     it 'should update a post', ->
       url = "#{Blogger.url}blogs/123/posts/456"
-      data =   
+      data =
         title: 'string'
-        content: 'string'      
+        content: 'string'
       $httpBackend.expectPUT(url, data, putHeaders).respond null
       Blogger.updatePosts '123', '456', data
-      $httpBackend.flush() 
+      $httpBackend.flush()
 
     it 'should publish a post', ->
       url = "#{Blogger.url}blogs/123/posts/456/publish?publishDate=datetime"
@@ -264,7 +267,7 @@ describe 'GAPI', ->
 
 
     # PAGEVIEWS
-    
+
     it 'should get pageviews for a blog', ->
       url = "#{Blogger.url}blogs/123/pageviews?range=all"
       $httpBackend.expectGET(url, getHeaders).respond null

@@ -28,15 +28,13 @@ describe 'GAPI', ->
     }
 
     getHeaders = deleteHeaders = patchHeaders = noContentHeaders =
-      "Accept":"application/json, text/plain, */*"
-      "X-Requested-With":"XMLHttpRequest"
       "Authorization":"Bearer 1234abcd"
+      "Accept":"application/json, text/plain, */*"
 
     postHeaders = putHeaders =
-      "Accept":"application/json, text/plain, */*"
-      "X-Requested-With":"XMLHttpRequest"
-      "Content-Type":"application/json;charset=utf-8"
       "Authorization":"Bearer 1234abcd"
+      "Accept":"application/json, text/plain, */*"
+      "Content-Type":"application/json;charset=utf-8"
 
     Service = new GAPI 'service', 'v1', 
       resources: [
@@ -188,9 +186,8 @@ describe 'GAPI', ->
     it 'should set a resource', ->
       url = "#{Service.url}resources/set"
       headers =
-        "Accept":"application/json, text/plain, */*"
-        "X-Requested-With":"XMLHttpRequest"
         "Authorization":"Bearer 1234abcd"
+        "Accept":"application/json, text/plain, */*"
       $httpBackend.expectPOST(url, undefined, headers).respond null
       Service.setResources()
       $httpBackend.flush()    
@@ -198,9 +195,8 @@ describe 'GAPI', ->
     it 'should unset a resource', ->
       url = "#{Service.url}resources/unset"
       headers =
-        "Accept":"application/json, text/plain, */*"
-        "X-Requested-With":"XMLHttpRequest"
         "Authorization":"Bearer 1234abcd"
+        "Accept":"application/json, text/plain, */*"
       $httpBackend.expectPOST(url, undefined, headers).respond null
       Service.unsetResources()
       $httpBackend.flush()  

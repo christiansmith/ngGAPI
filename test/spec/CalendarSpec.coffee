@@ -1,6 +1,6 @@
 describe 'GAPI', ->
 
-  { 
+  {
     GAPI,Calendar,
     $httpBackend,baseUrl,
     getHeaders,postHeaders,putHeaders,deleteHeaders,patchHeaders,noContentHeaders
@@ -9,11 +9,11 @@ describe 'GAPI', ->
 
 
   angular.module('gapi')
-    .value 'GoogleApp', 
+    .value 'GoogleApp',
       apiKey: '1234'
       clientId: 'abcd'
 
-    
+
   beforeEach module 'gapi'
 
 
@@ -27,16 +27,19 @@ describe 'GAPI', ->
       }
     }
 
-    getHeaders = deleteHeaders = patchHeaders = noContentHeaders =
-      "Accept":"application/json, text/plain, */*"
-      "X-Requested-With":"XMLHttpRequest"
+    getHeaders = deleteHeaders = noContentHeaders =
       "Authorization":"Bearer 1234abcd"
+      "Accept":"application/json, text/plain, */*"
+
+    patchHeaders =
+      "Authorization":"Bearer 1234abcd"
+      "Accept":"application/json, text/plain, */*"
+      "Content-Type":"application/json;charset=utf-8"
 
     postHeaders = putHeaders =
-      "Accept":"application/json, text/plain, */*"
-      "X-Requested-With":"XMLHttpRequest"
-      "Content-Type":"application/json;charset=utf-8"
       "Authorization":"Bearer 1234abcd"
+      "Accept":"application/json, text/plain, */*"
+      "Content-Type":"application/json;charset=utf-8"
 
 
   afterEach ->
@@ -74,14 +77,14 @@ describe 'GAPI', ->
       url = "#{Calendar.url}calendars/123/acl/456"
       $httpBackend.expectGET(url, getHeaders).respond null
       Calendar.getAcl '123', '456'
-      $httpBackend.flush()      
+      $httpBackend.flush()
 
     it 'should insert an acl', ->
       url = "#{Calendar.url}calendars/123/acl"
       data = { role: 'owner', scope: { type: 'user' } }
       $httpBackend.expectPOST(url, data, postHeaders).respond null
-      Calendar.insertAcl '123', data 
-      $httpBackend.flush()    
+      Calendar.insertAcl '123', data
+      $httpBackend.flush()
 
     it 'should list an acl', ->
       url = "#{Calendar.url}calendars/123/acl"
@@ -94,14 +97,14 @@ describe 'GAPI', ->
       data = { role: 'writer' }
       $httpBackend.expectPUT(url, data, postHeaders).respond null
       Calendar.updateAcl '123', '456', data
-      $httpBackend.flush()    
+      $httpBackend.flush()
 
     it 'should patch an acl', ->
       url = "#{Calendar.url}calendars/123/acl/456"
       data = { role: 'reader' }
       $httpBackend.expectPATCH(url, data, patchHeaders).respond null
       Calendar.patchAcl '123', '456', data
-      $httpBackend.flush()      
+      $httpBackend.flush()
 
 
     # CALENDAR LIST
@@ -116,7 +119,7 @@ describe 'GAPI', ->
       url = "#{Calendar.url}users/me/calendarList/xyz"
       $httpBackend.expectGET(url, getHeaders).respond null
       Calendar.getCalendarList 'xyz'
-      $httpBackend.flush()    
+      $httpBackend.flush()
 
     it 'should insert a calendar list', ->
       url = "#{Calendar.url}users/me/calendarList"
@@ -129,7 +132,7 @@ describe 'GAPI', ->
       url = "#{Calendar.url}users/me/calendarList?maxResults=5"
       $httpBackend.expectGET(url, getHeaders).respond null
       Calendar.listCalendarList { maxResults: 5 }
-      $httpBackend.flush()   
+      $httpBackend.flush()
 
     it 'should update a calendar list', ->
       url = "#{Calendar.url}users/me/calendarList/xyz"
@@ -209,60 +212,60 @@ describe 'GAPI', ->
       url = "#{Calendar.url}calendars/123/events/456"
       $httpBackend.expectGET(url, getHeaders).respond null
       Calendar.getEvents '123', '456'
-      $httpBackend.flush()    
+      $httpBackend.flush()
 
     it 'should import an event', ->
       url = "#{Calendar.url}calendars/123/events/import"
       data = { attendees: ['joe@example.com'], start: {}, end: {} }
       $httpBackend.expectPOST(url, data, postHeaders).respond null
-      Calendar.importEvents '123', data 
-      $httpBackend.flush()   
+      Calendar.importEvents '123', data
+      $httpBackend.flush()
 
     it 'should insert an event', ->
       url = "#{Calendar.url}calendars/123/events"
       data = { attendees: ['joe@example.com'], start: {}, end: {} }
       $httpBackend.expectPOST(url, data, postHeaders).respond null
-      Calendar.insertEvents '123', data 
-      $httpBackend.flush()      
-    
+      Calendar.insertEvents '123', data
+      $httpBackend.flush()
+
     it 'should list instances of a recurring event', ->
       url = "#{Calendar.url}calendars/123/events/456/instances"
       $httpBackend.expectGET(url, getHeaders).respond null
       Calendar.listEventInstances '123', '456'
-      $httpBackend.flush()       
+      $httpBackend.flush()
 
     it 'should list events on a specified calendar', ->
       url = "#{Calendar.url}calendars/123/events"
       $httpBackend.expectGET(url, getHeaders).respond null
       Calendar.listEvents '123'
-      $httpBackend.flush()    
+      $httpBackend.flush()
 
     it 'should move an event to another calendar', ->
       url = "#{Calendar.url}calendars/123/events/456/move?destination=124"
       $httpBackend.expectPOST(url, undefined, noContentHeaders).respond null
       Calendar.moveEvents '123', '456', '124'
-      $httpBackend.flush()   
+      $httpBackend.flush()
 
     it 'should create an event based on a simple text string', ->
       text = 'Appointment at Somewhere on June 3rd 10am-10:25am'
-      url = "#{Calendar.url}calendars/123/events/quickAdd?text=#{encodeURIComponent(text)}"
+      url = "#{Calendar.url}calendars/123/events/quickAdd?text=Appointment+at+Somewhere+on+June+3rd+10am-10:25am"
       $httpBackend.expectPOST(url, undefined, noContentHeaders).respond null
       Calendar.quickAdd '123', {text}
-      $httpBackend.flush()   
+      $httpBackend.flush()
 
     it 'should update an event', ->
       url = "#{Calendar.url}calendars/123/events/456"
       data = { attendees: ['joe@example.com'], start: {}, end: {} }
       $httpBackend.expectPUT(url, data, postHeaders).respond null
       Calendar.updateEvents '123', '456', data
-      $httpBackend.flush()     
+      $httpBackend.flush()
 
     it 'should patch an event', ->
       url = "#{Calendar.url}calendars/123/events/456"
       data = { attendees: ['joe@example.com'], start: {}, end: {} }
       $httpBackend.expectPATCH(url, data, patchHeaders).respond null
       Calendar.patchEvents '123', '456', data
-      $httpBackend.flush()  
+      $httpBackend.flush()
 
     it 'should watch for changes to events', ->
       url = "#{Calendar.url}calendars/123/events/watch"
@@ -274,9 +277,9 @@ describe 'GAPI', ->
         params:
           ttl: 'string'
       $httpBackend.expectPOST(url, data, postHeaders).respond null
-      Calendar.watchEvents '123', data 
+      Calendar.watchEvents '123', data
       $httpBackend.flush()
-    
+
 
     # FREEBUSY
 
@@ -288,7 +291,7 @@ describe 'GAPI', ->
         timeZone: 'string',
         groupExpansionMax: 'integer',
         calendarExpansionMax: 'integer',
-        items: 
+        items:
           id: 'string'
       $httpBackend.expectPOST(url, data, postHeaders).respond null
       Calendar.freeBusy(data)
@@ -301,13 +304,13 @@ describe 'GAPI', ->
       url = "#{Calendar.url}users/me/settings/xyz"
       $httpBackend.expectGET(url, getHeaders).respond null
       Calendar.getSettings 'xyz'
-      $httpBackend.flush()  
+      $httpBackend.flush()
 
     it 'should list user settings for the authenticated user', ->
       url = "#{Calendar.url}users/me/settings"
       $httpBackend.expectGET(url, getHeaders).respond null
       Calendar.listSettings()
-      $httpBackend.flush() 
+      $httpBackend.flush()
 
 
     # CHANNELS
@@ -316,5 +319,5 @@ describe 'GAPI', ->
       url = "#{Calendar.url}channels/stop"
       data = { id: 'string', resourceId: 'string' }
       $httpBackend.expectPOST(url, data, postHeaders).respond null
-      Calendar.stopWatching data 
-      $httpBackend.flush()       
+      Calendar.stopWatching data
+      $httpBackend.flush()

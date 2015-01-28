@@ -1,5 +1,6 @@
 {
   "name": "ngGAPI",
+  "main": "gapi.js",
   "version": "0.0.0",
   "ignore": [
     "**/.*",
