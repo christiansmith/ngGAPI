@@ -12,7 +12,7 @@ describe 'GAPI', ->
     .value 'GoogleApp', 
       apiKey: '1234'
       clientId: 'abcd'
-    
+
 
   beforeEach module 'gapi'
 
@@ -28,15 +28,13 @@ describe 'GAPI', ->
     }
 
     getHeaders = deleteHeaders = 
-      "Accept":"application/json, text/plain, */*"
-      "X-Requested-With":"XMLHttpRequest"
       "Authorization":"Bearer 1234abcd"
+      "Accept":"application/json, text/plain, */*"
 
     postHeaders = putHeaders =
-      "Accept":"application/json, text/plain, */*"
-      "X-Requested-With":"XMLHttpRequest"
-      "Content-Type":"application/json;charset=utf-8"
       "Authorization":"Bearer 1234abcd"
+      "Accept":"application/json, text/plain, */*"
+      "Content-Type":"application/json;charset=utf-8"
 
 
   afterEach ->
@@ -86,7 +84,7 @@ describe 'GAPI', ->
       url = "#{Plus.url}people/xyz/people/visible?maxResults=5"
       $httpBackend.expectGET(url, getHeaders).respond null
       Plus.listPeople 'xyz', 'visible', { maxResults: 5 }
-      $httpBackend.flush()      
+      $httpBackend.flush()
 
 
     # ACTIVITIES
@@ -138,7 +136,7 @@ describe 'GAPI', ->
       url = "#{Plus.url}people/xyz/moments/vault"
       $httpBackend.expectGET(url, getHeaders).respond null
       Plus.listMoments 'xyz', 'vault'
-      $httpBackend.flush()       
+      $httpBackend.flush()
 
     it 'should delete a moment written by the app', ->
       url = "#{Plus.url}moments/123"

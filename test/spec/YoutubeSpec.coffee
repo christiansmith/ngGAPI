@@ -12,7 +12,6 @@ describe 'GAPI', ->
     .value 'GoogleApp', 
       apiKey: '1234'
       clientId: 'abcd'
-    
 
   beforeEach module 'gapi'
 
@@ -28,16 +27,14 @@ describe 'GAPI', ->
     }
 
     getHeaders = deleteHeaders = 
-      "Accept":"application/json, text/plain, */*"
-      "X-Requested-With":"XMLHttpRequest"
       "Authorization":"Bearer 1234abcd"
+      "Accept":"application/json, text/plain, */*"
 
     postHeaders = putHeaders =
-      "Accept":"application/json, text/plain, */*"
-      "X-Requested-With":"XMLHttpRequest"
-      "Content-Type":"application/json;charset=utf-8"
       "Authorization":"Bearer 1234abcd"
-    
+      "Accept":"application/json, text/plain, */*"
+      "Content-Type":"application/json;charset=utf-8"
+
 
   afterEach ->
     $httpBackend.verifyNoOutstandingExpectation()
@@ -215,9 +212,8 @@ describe 'GAPI', ->
     it 'should set thumbnails', ->
       url = "#{Youtube.url}thumbnails/set?videoId=123"
       headers =
-        "Accept":"application/json, text/plain, */*"
-        "X-Requested-With":"XMLHttpRequest"
         "Authorization":"Bearer 1234abcd"      
+        "Accept":"application/json, text/plain, */*"
       $httpBackend.expectPOST(url, undefined, headers).respond null
       Youtube.setThumbnails({ videoId: '123' })
       $httpBackend.flush()      
@@ -263,9 +259,8 @@ describe 'GAPI', ->
     it 'should rate videos', ->
       url = "#{Youtube.url}videos/rate?id=xyz&rating=like"
       headers = 
-        "Accept":"application/json, text/plain, */*"
-        "X-Requested-With":"XMLHttpRequest"
         "Authorization":"Bearer 1234abcd"
+        "Accept":"application/json, text/plain, */*"
       $httpBackend.expectPOST(url, undefined, headers).respond null
       Youtube.rateVideos({ id: 'xyz', rating: 'like' })
       $httpBackend.flush()
@@ -282,9 +277,8 @@ describe 'GAPI', ->
     it 'should set watermarks', ->
       url = "#{Youtube.url}watermarks/set?channelId=123"
       headers =
-        "Accept":"application/json, text/plain, */*"
-        "X-Requested-With":"XMLHttpRequest"
         "Authorization":"Bearer 1234abcd"      
+        "Accept":"application/json, text/plain, */*"
       $httpBackend.expectPOST(url, undefined, headers).respond null
       Youtube.setWatermarks({ channelId: '123' })
       $httpBackend.flush()
@@ -292,16 +286,15 @@ describe 'GAPI', ->
     it 'should unset watermark', ->
       url = "#{Youtube.url}watermarks/unset?channelId=123"
       headers =
+        "Authorization":"Bearer 1234abcd"
         "Accept":"application/json, text/plain, */*"
-        "X-Requested-With":"XMLHttpRequest"
-        "Authorization":"Bearer 1234abcd"      
       $httpBackend.expectPOST(url, undefined, headers).respond null
       Youtube.unsetWatermarks({ channelId: '123' })
-      $httpBackend.flush()    
-    
+      $httpBackend.flush()
+
 
     # SEARCH
-    
+
     it 'should search', ->
       url = "#{Youtube.url}search?part=snippet&q=terms"
       $httpBackend.expectGET(url, getHeaders).respond null

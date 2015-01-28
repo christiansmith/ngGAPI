@@ -200,7 +200,7 @@ angular.module('gapi', [])
         url:    this.url + path.join('/'),
         data:   data,
         params: params
-      });            
+      });
     }
 
 
@@ -713,8 +713,35 @@ angular.module('gapi', [])
       return GAPI.request({
         method: 'DELETE',
         url:    Plus.url + ['moments', id].join('/')
-      });       
+      });
     };
 
     return Plus;
   })
+
+  /**
+   * Calendar API
+   */
+
+  .factory('AdminDirectory', function (GAPI) {
+    var AdminDirectory = new GAPI('admin/directory', 'v1', {
+      users: ['get', 'insert', 'update', 'delete'],
+    });
+
+    AdminDirectory.makeAdmin = function (id) {
+      var data = {'status':true};
+      return AdminDirectory.post('users', id, 'makeAdmin', data);
+    };
+
+    AdminDirectory.unMakeAdmin = function (id) {
+      var data = {'status':false};
+      return AdminDirectory.post('users', id, 'makeAdmin', data);
+    };
+
+    AdminDirectory.listUsers = function (params) {
+      return AdminDirectory.get('users', params);
+    };
+
+    return AdminDirectory;
+  })
+

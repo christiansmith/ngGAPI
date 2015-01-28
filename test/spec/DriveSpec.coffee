@@ -12,7 +12,7 @@ describe 'GAPI', ->
     .value 'GoogleApp', 
       apiKey: '1234'
       clientId: 'abcd'
-    
+
 
   beforeEach module 'gapi'
 
@@ -27,16 +27,19 @@ describe 'GAPI', ->
       }
     }
 
-    getHeaders = deleteHeaders = patchHeaders = noContentHeaders =
-      "Accept":"application/json, text/plain, */*"
-      "X-Requested-With":"XMLHttpRequest"
+    getHeaders = deleteHeaders = noContentHeaders =
       "Authorization":"Bearer 1234abcd"
+      "Accept":"application/json, text/plain, */*"
+
+    patchHeaders =
+      "Authorization":"Bearer 1234abcd"
+      "Accept":"application/json, text/plain, */*"
+      "Content-Type":"application/json;charset=utf-8"
 
     postHeaders = putHeaders =
-      "Accept":"application/json, text/plain, */*"
-      "X-Requested-With":"XMLHttpRequest"
-      "Content-Type":"application/json;charset=utf-8"
       "Authorization":"Bearer 1234abcd"
+      "Accept":"application/json, text/plain, */*"
+      "Content-Type":"application/json;charset=utf-8"
 
 
   afterEach ->
@@ -112,7 +115,7 @@ describe 'GAPI', ->
       url = "#{Drive.url}files?q=terms"
       $httpBackend.expectGET(url, getHeaders).respond null
       Drive.listFiles { q: 'terms' }
-      $httpBackend.flush()   
+      $httpBackend.flush()
 
     it 'should touch a file', ->
       url = "#{Drive.url}files/xyz/touch"
