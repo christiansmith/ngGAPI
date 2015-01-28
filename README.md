@@ -57,6 +57,15 @@ To use a specific service, inject it into your controllers by name. All GAPI met
 
 * GAPI.init()
 
+#### [**Admin Directory**](https://developers.google.com/admin-sdk/directory/v1/guides/manage-users)
+
+* Users
+  * **AdminDirectory.insertUsers(params)**
+  * **AdminDirectory.updateUsers(id, params)**
+  * **AdminDirectory.makeAdmin(id)**
+  * **AdminDirectory.unMakeAdmin(id)**
+  * **AdminDirectory.getUsers(id)**
+  * **AdminDirectory.listUsers(params)**
 
 #### Drive
 
