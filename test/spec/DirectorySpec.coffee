@@ -115,3 +115,85 @@ describe 'GAPI', ->
       Directory.listUsers {'customer':'1234','maxResults':20,'orderBy':'familyName','pageToken':'pageToken','query':'email=someone@example.com','sortOrder':'descending'}
       $httpBackend.flush()
 
+    # Groups
+
+    it 'should create a group', ->
+      url = "#{Directory.url}groups"
+      data = { "email": "testgroup@mydomain.com", "name": "Test Group", "description": "Test Group Long Description" };
+      $httpBackend.expectPOST(url, data, postHeaders).respond null
+      Directory.insertGroups data
+      $httpBackend.flush()
+
+    it 'should update a group', ->
+      url = "#{Directory.url}groups/testgroup@mydomain.com"
+      data = { "email": "testgroup@mydomain.com", "name": "Test Group", "description": "Test Group Long Description" };
+      $httpBackend.expectPUT(url, data, putHeaders).respond null
+      Directory.updateGroups 'testgroup@mydomain.com', data
+      $httpBackend.flush()
+
+    it 'should patch a group', ->
+      url = "#{Directory.url}groups/testgroup@mydomain.com"
+      data = { "email": "testgroup@mydomain.com", "description": "Test Group Long Description" };
+      $httpBackend.expectPATCH(url, data, putHeaders).respond null
+      Directory.patchGroups 'testgroup@mydomain.com', data
+      $httpBackend.flush()
+
+    it 'should get a group', ->
+      url = "#{Directory.url}groups/testgroup@mydomain.com"
+      $httpBackend.expectGET(url, getHeaders).respond null
+      Directory.getGroups 'testgroup@mydomain.com'
+      $httpBackend.flush()
+
+    it 'should list all groups', ->
+      url = "#{Directory.url}groups?domain=example.com"
+      $httpBackend.expectGET(url, getHeaders).respond null
+      Directory.listGroups {'domain':'example.com'}
+      $httpBackend.flush()
+
+    it 'should delete a group', ->
+      url = "#{Directory.url}groups/testgroup@mydomain.com"
+      $httpBackend.expectDELETE(url, getHeaders).respond null
+      Directory.deleteGroups 'testgroup@mydomain.com'
+      $httpBackend.flush()
+
+    # Group Members
+
+    it 'should create a member', ->
+      url = "#{Directory.url}groups/testgroup@mydomain.com/members"
+      data = {"kind":"admin#directory#member","email":"testuser@example.com","role":"MEMBER"}
+      $httpBackend.expectPOST(url, data, postHeaders).respond null
+      Directory.insertMembers 'testgroup@mydomain.com', data
+      $httpBackend.flush()
+
+    it 'should update a member', ->
+      url = "#{Directory.url}groups/testgroup@mydomain.com/members/testuser@mydomain.com"
+      data = {"kind":"admin#directory#member","role":"MEMBER"}
+      $httpBackend.expectPUT(url, data, putHeaders).respond null
+      Directory.updateMembers 'testgroup@mydomain.com', 'testuser@mydomain.com', data
+      $httpBackend.flush()
+
+    it 'should patch a member', ->
+      url = "#{Directory.url}groups/testgroup@mydomain.com/members/testuser@mydomain.com"
+      data = {"kind":"admin#directory#member","role":"MEMBER"}
+      $httpBackend.expectPATCH(url, data, putHeaders).respond null
+      Directory.patchMembers 'testgroup@mydomain.com', 'testuser@mydomain.com', data
+      $httpBackend.flush()
+
+    it 'should get a member', ->
+      url = "#{Directory.url}groups/testgroup@mydomain.com/members/testuser@mydomain.com"
+      $httpBackend.expectGET(url, getHeaders).respond null
+      Directory.getMembers 'testgroup@mydomain.com', 'testuser@mydomain.com'
+      $httpBackend.flush()
+
+    it 'should list all members', ->
+      url = "#{Directory.url}groups/testgroup@mydomain.com/members"
+      $httpBackend.expectGET(url, getHeaders).respond null
+      Directory.listMembers 'testgroup@mydomain.com'
+      $httpBackend.flush()
+
+    it 'should delete a member', ->
+      url = "#{Directory.url}groups/testgroup@mydomain.com/members/testuser@mydomain.com"
+      $httpBackend.expectDELETE(url, getHeaders).respond null
+      Directory.deleteMembers 'testgroup@mydomain.com', 'testuser@mydomain.com'
+      $httpBackend.flush()
+

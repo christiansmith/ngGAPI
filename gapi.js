@@ -739,8 +739,8 @@ angular.module('gapi', [])
   .factory('Directory', function (GAPI) {
     var Directory = new GAPI('admin/directory', 'v1', {
       users: ['get', 'insert', 'update', 'delete'],
-      groups: ['get', 'insert', 'update', 'delete', {
-          members: ['get', 'insert', 'update', 'delete', 'patch']
+      groups: ['get', 'insert', 'update', 'delete', 'list', 'patch', {
+          members: ['get', 'insert', 'update', 'delete', 'patch', 'list']
       }],
     });
 
