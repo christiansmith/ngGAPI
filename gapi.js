@@ -8,7 +8,7 @@ angular.module('gapi', [])
    * for communicating with all google apis, and then specialize it
    * for each service.
    *
-   * The reponsibility of this general service is to implement the 
+   * The reponsibility of this general service is to implement the
    * authorization flow, and make requests on behalf of a dependent
    * API specific service.
    *
@@ -26,12 +26,11 @@ angular.module('gapi', [])
 
 
 
-  .factory('GAPI', function ($q, $http, GoogleApp) {
+  .factory('GAPI', function ($q, $http, $log, GoogleApp) {
 
     /**
      * GAPI Credentials
      */
-
     GAPI.app = GoogleApp;
 
 
@@ -62,7 +61,7 @@ angular.module('gapi', [])
      * For each resource in the provided spec, we define methods
      * for each of the its actions.
      */
-    
+
     function createMethods (service, spec, parents) {
       var resources = Object.keys(spec);
 
@@ -70,7 +69,7 @@ angular.module('gapi', [])
         var actions = spec[resource];
 
         actions.forEach(function (action) {
-          
+
           // if the action is an object, treat it as a nested
           // spec and recurse
           if (typeof action === 'object') {
@@ -82,10 +81,10 @@ angular.module('gapi', [])
             createMethods(service, action, p);
 
           } else {
-          
+
             var method = methodName(action, resource);
-            service[method] = GAPI[action](resource, parents);              
-          
+            service[method] = GAPI[action](resource, parents);
+
           }
         });
       });
@@ -111,15 +110,15 @@ angular.module('gapi', [])
 
     function oauthHeader(options) {
       if (!options.headers) { options.headers = {}; }
-      options.headers['Authorization'] = 'Bearer ' + GAPI.app.oauthToken.access_token;      
+      options.headers['Authorization'] = 'Bearer ' + GAPI.app.oauthToken.access_token;
     }
 
     function oauthParams(options) {
       if (!options.params) { options.params = {}; }
-      options.params.access_token = GAPI.app.oauthToken.access_token;      
+      options.params.access_token = GAPI.app.oauthToken.access_token;
     }
 
-    
+
     /**
      * HTTP Request Helper
      */
@@ -130,12 +129,15 @@ angular.module('gapi', [])
       oauthHeader(config);
 
       function success(response) {
-        console.log(config, response);
-        deferred.resolve(response.data);
+        $log.log('Request success: ', config, response);
+        if(response.data)
+            deferred.resolve(response.data);
+        else
+            deferred.resolve(response);
       }
 
       function failure(fault) {
-        console.log(config, fault);
+        $log.log('Request failure: ', config, fault);
         deferred.reject(fault);
       }
 
@@ -236,7 +238,7 @@ angular.module('gapi', [])
 
     function parseParams (args) {
       var last = args[(args.length - 1).toString()];
-      return (typeof last === 'object') ? last : null      
+      return (typeof last === 'object') ? last : null
     }
 
 
@@ -252,7 +254,7 @@ angular.module('gapi', [])
 
         args.forEach(function (arg, i) {
           if (!arg || typeof arg === 'object') {
-            other += 1;                         
+            other += 1;
             if (other === 1) { parsedArgs.data   = arg; }
             if (other === 2) { parsedArgs.params = arg; }
           } 
@@ -300,7 +302,7 @@ angular.module('gapi', [])
           params: parseParams(arguments)
         });
       };
-    };    
+    };
 
 
     GAPI.list = function (resource, parents) {
@@ -312,20 +314,20 @@ angular.module('gapi', [])
         });
       };
     };
-    
+
 
     GAPI.insert = function (resource, parents) {
       return function () {
         var args = parseDataParams(arguments);
         return request({
           method: 'POST',
-          url:    resourceUrl(arguments, parents, this.url, resource), 
+          url:    resourceUrl(arguments, parents, this.url, resource),
           data:   args.data,
           params: args.params
         });
       };
     };
-    
+
 
     GAPI.update = function (resource, parents) {
       return function () {
@@ -339,7 +341,7 @@ angular.module('gapi', [])
       };
     };
 
-  
+
     GAPI.patch = function (resource, parents) {
       return function () {
         var args = parseDataParams(arguments);
@@ -369,40 +371,51 @@ angular.module('gapi', [])
      */
 
     GAPI.init = function () {
-      var app = GAPI.app
-        , deferred = $q.defer(),
-
-        onAuth = function () {
-          app.oauthToken = gapi.auth.getToken();
-          deferred.resolve(app);
-          console.log('authorization', app)
-        };
-
-
-
-      gapi.load('auth', function () {
-        gapi.auth.authorize({
-          client_id: app.clientId,
-          scope: app.scopes,
-          immediate: true     
-          }, function (response) {
-
-            if (response.status.signed_in === true) {
-              onAuth();
-            } else {
-
+      var app = GAPI.app,
+        deferred = $q.defer(),
+        attemptCounter = 0,
+        onAuth = function (response) {
+          attemptCounter++;
+          if(attemptCounter > 3)
+          {
+              deferred.reject('Login attempt failed. Attempted to login ' + attemptCounter + ' times.');
+              return;
+          }
+          // The response could tell us the user is not logged in.
+          if(response && !response.error)
+          {
+              if(response.status && response.status.signed_in === true)
+              {
+                  app.oauthToken = gapi.auth.getToken();
+                  deferred.resolve(app);
+              }
+              else
+              {
+                  deferred.reject("App failed to log-in to Google API services.");
+              }
+          }
+          else
+          {
+              deferred.notify('Login attempt failed. Trying again. Attempt #' + attemptCounter);
               gapi.auth.authorize({
                 client_id: app.clientId,
                 scope: app.scopes,
-                immediate: false     
-                }, onAuth);
-            }
+                immediate: true
+                }, onAuth
+              );
+          }
+        };
 
+      deferred.notify('Trying to log-in to Google API services.');
 
-          });
-      });
+      gapi.auth.authorize({
+        client_id: app.clientId,
+        scope: app.scopes,
+        immediate: true
+        }, onAuth
+      );
 
-      return deferred.promise;  
+      return deferred.promise;
     }
 
     return GAPI;
@@ -442,7 +455,7 @@ angular.module('gapi', [])
     };
 
     Youtube.getVideoRating = function (params) {
-      return Youtube.get('videos', 'getRating', params);     
+      return Youtube.get('videos', 'getRating', params);
     };
 
     Youtube.search = function (params) {
@@ -512,17 +525,17 @@ angular.module('gapi', [])
 
 
     Blogger.publishPosts = function (blogId, postId, params) {
-      return Blogger.post('blogs', blogId, 'posts', postId, 'publish', undefined, params);      
+      return Blogger.post('blogs', blogId, 'posts', postId, 'publish', undefined, params);
     };
 
 
     Blogger.revertPosts = function (blogId, postId) {
-      return Blogger.post('blogs', blogId, 'posts', postId, 'revert');    
+      return Blogger.post('blogs', blogId, 'posts', postId, 'revert');
     };
 
 
     Blogger.getBlogUserInfos = function (userId, blogId, params) {
-      return Blogger.get('users', userId, 'blogs', blogId, params);     
+      return Blogger.get('users', userId, 'blogs', blogId, params);
     };
 
 
@@ -530,14 +543,14 @@ angular.module('gapi', [])
       return Blogger.get('blogs', blogId, 'pageviews', params);
     };
 
-    
+
     Blogger.getPostUserInfos = function (userId, blogId, postId, params) {
       return Blogger.get('users', userId, 'blogs', blogId, 'posts', postId, params);
     };
 
 
     Blogger.listPostUserInfos = function (userId, blogId, params) {
-      return Blogger.get('users', userId, 'blogs', blogId, 'posts', params); 
+      return Blogger.get('users', userId, 'blogs', blogId, 'posts', params);
     };
 
 
@@ -608,7 +621,7 @@ angular.module('gapi', [])
     var Drive = new GAPI('drive', 'v2', {
       files:          ['get', 'list', 'insert', 'update', 'delete', 'patch', {
         children:     ['get', 'list', 'insert', 'delete'],
-        parents:      ['get', 'list', 'insert', 'delete'],        
+        parents:      ['get', 'list', 'insert', 'delete'],
         permissions:  ['get', 'list', 'insert', 'update', 'delete', 'patch'],
         revisions:    ['get', 'list', 'update', 'delete', 'patch'],
         comments:     ['get', 'list', 'insert', 'update', 'delete', 'patch', {
@@ -626,7 +639,7 @@ angular.module('gapi', [])
     };
 
     Drive.touchFile   = function (fileId) {
-      return Drive.post('files', fileId, 'touch');  
+      return Drive.post('files', fileId, 'touch');
     };
 
     Drive.trashFile   = function (fileId) {
@@ -634,7 +647,7 @@ angular.module('gapi', [])
     };
 
     Drive.untrashFile = function (fileId) {
-      return Drive.post('files', fileId, 'untrash');      
+      return Drive.post('files', fileId, 'untrash');
     };
 
     Drive.watchFile   = function (fileId, data) {
@@ -659,7 +672,7 @@ angular.module('gapi', [])
 
     Drive.updateRealtime = function (fileId, params) {
       return GAPI.request({
-        method: 'PUT', 
+        method: 'PUT',
         url:    Drive.url + ['files', fileId, 'realtime'].join('/'),
         params: params
       });
@@ -681,18 +694,18 @@ angular.module('gapi', [])
       }],
       activities:   ['get', {
         comments:   ['list']
-      }], 
+      }],
       comments:     ['get']
     });
 
     Plus.searchPeople = function (params) {
-      return Plus.get('people', params);  
+      return Plus.get('people', params);
     };
 
     Plus.listPeopleByActivity = function (activityId, collection, params) {
-      return Plus.get('activities', activityId, 'people', collection, params);    
+      return Plus.get('activities', activityId, 'people', collection, params);
     };
-    
+
     Plus.listPeople = function (userId, collection, params) {
       return Plus.get('people', userId, 'people', collection, params);
     }
@@ -702,7 +715,7 @@ angular.module('gapi', [])
     };
 
     Plus.insertMoments = function (userId, collection, data, params) {
-      return Plus.post('people', userId, 'moments', collection, data, params);      
+      return Plus.post('people', userId, 'moments', collection, data, params);
     };
 
     Plus.listMoments = function (userId, collection, params) {
@@ -720,28 +733,31 @@ angular.module('gapi', [])
   })
 
   /**
-   * Calendar API
+   * Admin Directory API
    */
 
-  .factory('AdminDirectory', function (GAPI) {
-    var AdminDirectory = new GAPI('admin/directory', 'v1', {
+  .factory('Directory', function (GAPI) {
+    var Directory = new GAPI('admin/directory', 'v1', {
       users: ['get', 'insert', 'update', 'delete'],
+      groups: ['get', 'insert', 'update', 'delete', {
+          members: ['get', 'insert', 'update', 'delete', 'patch']
+      }],
     });
 
-    AdminDirectory.makeAdmin = function (id) {
+    Directory.makeAdmin = function (id) {
       var data = {'status':true};
-      return AdminDirectory.post('users', id, 'makeAdmin', data);
+      return Directory.post('users', id, 'makeAdmin', data);
     };
 
-    AdminDirectory.unMakeAdmin = function (id) {
+    Directory.unMakeAdmin = function (id) {
       var data = {'status':false};
-      return AdminDirectory.post('users', id, 'makeAdmin', data);
+      return Directory.post('users', id, 'makeAdmin', data);
     };
 
-    AdminDirectory.listUsers = function (params) {
-      return AdminDirectory.get('users', params);
+    Directory.listUsers = function (params) {
+      return Directory.get('users', params);
     };
 
-    return AdminDirectory;
+    return Directory;
   })
 
