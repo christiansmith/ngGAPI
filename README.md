@@ -57,15 +57,28 @@ To use a specific service, inject it into your controllers by name. All GAPI met
 
 * GAPI.init()
 
-#### [**Admin Directory**](https://developers.google.com/admin-sdk/directory/v1/guides/manage-users)
+#### [**Admin Directory::users**](https://developers.google.com/admin-sdk/directory/)
 
 * Users
-  * **AdminDirectory.insertUsers(params)**
-  * **AdminDirectory.updateUsers(id, params)**
-  * **AdminDirectory.makeAdmin(id)**
-  * **AdminDirectory.unMakeAdmin(id)**
-  * **AdminDirectory.getUsers(id)**
-  * **AdminDirectory.listUsers(params)**
+  * [**AdminDirectory.insertUsers(params)**](https://developers.google.com/admin-sdk/directory/v1/reference/users/insert)
+  * [**AdminDirectory.updateUsers(id, params)**](https://developers.google.com/admin-sdk/directory/v1/reference/users/update)
+  * [**AdminDirectory.patchUsers(id, params)**](https://developers.google.com/admin-sdk/directory/v1/reference/users/patch)
+  * [**AdminDirectory.deleteUsers(id, params)**](https://developers.google.com/admin-sdk/directory/v1/reference/users/delete)
+  * [**AdminDirectory.makeAdmin(id)**](https://developers.google.com/admin-sdk/directory/v1/reference/users/makeAdmin)
+  * [**AdminDirectory.unMakeAdmin(id)**](https://developers.google.com/admin-sdk/directory/v1/reference/users/makeAdmin)
+  * [**AdminDirectory.getUsers(id)**](https://developers.google.com/admin-sdk/directory/v1/reference/users/get)
+  * [**AdminDirectory.listUsers(params)**](https://developers.google.com/admin-sdk/directory/v1/reference/users/list)
+
+
+#### [**Admin Directory::groups**](https://developers.google.com/admin-sdk/directory/)
+
+* Users
+  * [**AdminDirectory.insertGroups(params)**](https://developers.google.com/admin-sdk/directory/v1/reference/groups/insert)
+  * [**AdminDirectory.updateGroups(id, params)**](https://developers.google.com/admin-sdk/directory/v1/reference/groups/update)
+  * [**AdminDirectory.patchGroups(id, params)**](https://developers.google.com/admin-sdk/directory/v1/reference/groups/patch)
+  * [**AdminDirectory.deleteGroups(id, params)**](https://developers.google.com/admin-sdk/directory/v1/reference/groups/delete)
+  * [**AdminDirectory.getGroups(id)**](https://developers.google.com/admin-sdk/directory/v1/reference/groups/get)
+  * [**AdminDirectory.listGroups(params)**](https://developers.google.com/admin-sdk/directory/v1/reference/groups/list)
 
 #### Drive
 
