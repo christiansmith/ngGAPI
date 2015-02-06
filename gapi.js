@@ -376,26 +376,19 @@ angular.module('gapi', [])
         attemptCounter = 0,
         onAuth = function (response) {
           attemptCounter++;
-          if(attemptCounter > 3)
-          {
+          if(attemptCounter > 3) {
               deferred.reject('Login attempt failed. Attempted to login ' + attemptCounter + ' times.');
               return;
           }
           // The response could tell us the user is not logged in.
-          if(response && !response.error)
-          {
-              if(response.status && response.status.signed_in === true)
-              {
+          if(response && !response.error) {
+              if(response.status && response.status.signed_in === true) {
                   app.oauthToken = gapi.auth.getToken();
                   deferred.resolve(app);
-              }
-              else
-              {
+              } else {
                   deferred.reject("App failed to log-in to Google API services.");
               }
-          }
-          else
-          {
+          } else {
               deferred.notify('Login attempt failed. Trying again. Attempt #' + attemptCounter);
               gapi.auth.authorize({
                 client_id: app.clientId,
@@ -731,6 +724,7 @@ angular.module('gapi', [])
 
     return Plus;
   })
+
 
   /**
    * Admin Directory API
