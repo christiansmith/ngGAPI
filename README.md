@@ -21,6 +21,9 @@ If you don't use Bower, just download `gapi.js` into your scripts directory.
 
     <script src="your/js/path/gapi.js"></script>
 
+ngGAPI requires Google API JavaScript client library
+
+    <script src="https://apis.google.com/js/client.js"></script>
 
 ## Usage
 
