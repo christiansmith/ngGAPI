@@ -33,9 +33,9 @@ Be sure to include "gapi" as a dependency in your main app module.
 
 After you register your app in the [Google APIs Console](https://code.google.com/apis/console), configure ngGAPI with credentials and whatever scopes you need for your app.
 
+###with OAuth 2.0
     angular.module('myApp')
       .value('GoogleApp', {
-        apiKey: 'YOUR_API_KEY',
         clientId: 'YOUR_CLIENT_ID',
         scopes: [
           // whatever scopes you need for your app, for example:
@@ -44,7 +44,13 @@ After you register your app in the [Google APIs Console](https://code.google.com
           'https://www.googleapis.com/auth/userinfo.profile'
           // ...
         ]
-      })
+      });
+
+### with API keys
+    angular.module('myApp')
+      .value('GoogleApp', {
+        apiKey: 'YOUR_API_KEY'
+      });
 
 To use a specific service, inject it into your controllers by name. All GAPI methods return a promise.
 
