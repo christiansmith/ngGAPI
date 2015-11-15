@@ -105,8 +105,20 @@ angular.module('gapi', [])
 
 
     /**
-     * OAuth 2.0 Signatures
+     * Credential exclusive way: API-key or Oauth 2.0
      */
+
+    function credential(options) {
+      if (GAPI.app.apiKey && !GAPI.app.clientId) {
+        setApiKey(options);
+      } else {
+        oauthHeader(options);
+      }
+    }
+
+    function setApiKey(options) {
+      options.params.key = GAPI.app.apiKey;
+    }
 
     function oauthHeader(options) {
       if (!options.headers) { options.headers = {}; }
@@ -126,7 +138,7 @@ angular.module('gapi', [])
     function request (config) {
       var deferred = $q.defer();
 
-      oauthHeader(config);
+      credential(config);
 
       function success(response) {
         $log.log('Request success: ', config, response);
