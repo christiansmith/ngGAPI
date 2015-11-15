@@ -303,7 +303,7 @@ Official Youtube DATA API (v3) [reference documentation](https://developers.goog
 
 ## Development
 
-Installing the Karma test runner with `npm install karma -g`, then run the tests with `karma start`.
+Installing the npm list `npm install`, then run the tests with `npm test`.
 
 ## Copyright and License
 
