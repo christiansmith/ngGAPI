@@ -371,45 +371,50 @@ angular.module('gapi', [])
      */
 
     GAPI.init = function () {
-      var app = GAPI.app,
-        deferred = $q.defer(),
-        attemptCounter = 0,
-        onAuth = function (response) {
-          attemptCounter++;
-          if(attemptCounter > 3) {
-              deferred.reject('Login attempt failed. Attempted to login ' + attemptCounter + ' times.');
-              return;
-          }
-          // The response could tell us the user is not logged in.
-          if(response && !response.error) {
-              if(response.status && response.status.signed_in === true) {
-                  app.oauthToken = gapi.auth.getToken();
-                  deferred.resolve(app);
-              } else {
-                  deferred.reject("App failed to log-in to Google API services.");
-              }
-          } else {
-              deferred.notify('Login attempt failed. Trying again. Attempt #' + attemptCounter);
-              gapi.auth.authorize({
-                client_id: app.clientId,
-                scope: app.scopes,
-                immediate: true
+
+        gapi.load('auth', function() {
+
+            var app = GAPI.app,
+                deferred = $q.defer(),
+                attemptCounter = 0,
+                onAuth = function (response) {
+                    attemptCounter++;
+                    if(attemptCounter > 3) {
+                        deferred.reject('Login attempt failed. Attempted to login ' + attemptCounter + ' times.');
+                        return;
+                    }
+                    // The response could tell us the user is not logged in.
+                    if(response && !response.error) {
+                        if(response.status && response.status.signed_in === true) {
+                            app.oauthToken = gapi.auth.getToken();
+                            deferred.resolve(app);
+                        } else {
+                            deferred.reject("App failed to log-in to Google API services.");
+                        }
+                    } else {
+                        deferred.notify('Login attempt failed. Trying again. Attempt #' + attemptCounter);
+                        gapi.auth.authorize({
+                                client_id: app.clientId,
+                                scope: app.scopes,
+                                immediate: true
+                            }, onAuth
+                        );
+                    }
+                };
+
+            deferred.notify('Trying to log-in to Google API services.');
+
+            gapi.auth.authorize({
+                    client_id: app.clientId,
+                    scope: app.scopes,
+                    immediate: true
                 }, onAuth
-              );
-          }
-        };
+            );
 
-      deferred.notify('Trying to log-in to Google API services.');
+            return deferred.promise;
 
-      gapi.auth.authorize({
-        client_id: app.clientId,
-        scope: app.scopes,
-        immediate: true
-        }, onAuth
-      );
-
-      return deferred.promise;
-    }
+        });
+    };
 
     return GAPI;
   })
